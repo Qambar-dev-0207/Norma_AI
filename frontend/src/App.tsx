@@ -7,6 +7,8 @@ import BulkUpload from './pages/BulkUpload';
 import Patients from './pages/Patients';
 import Appointments from './pages/Appointments';
 import LandingPage from './pages/LandingPage';
+import Inbox from './pages/Inbox';
+import Settings from './pages/Settings';
 
 function App() {
   return (
@@ -21,7 +23,8 @@ function App() {
           <Route path="/appointments" element={<Appointments />} />
           <Route path="/patients" element={<Patients />} />
           <Route path="/bulk-upload" element={<BulkUpload />} />
-          <Route path="/settings" element={<div className="p-8 text-center text-gray-500">Settings View Placeholder</div>} />
+          <Route path="/inbox" element={<Inbox />} />
+          <Route path="/settings" element={<Settings />} />
         </Route>
         
         <Route path="*" element={<Navigate to="/" replace />} />

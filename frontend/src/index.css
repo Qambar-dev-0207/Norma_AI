@@ -1,75 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200&display=swap');
 @import "tailwindcss";
 
 :root {
-  --bg-soft: #f0f2f5;
-  --purple-primary: #7c3aed;
-  --purple-soft: #ede9fe;
-  --text-main: #1e293b;
-  --text-light: #64748b;
+  --bg-deep: #0b1326;
+  --bg-surface: #131b2e;
+  --accent-teal: #44ddc1;
+  --accent-purple: #7c3aed;
+  --text-primary: #dae2fd;
+  --text-secondary: #85948f;
+  --border-glass: rgba(60, 74, 70, 0.1);
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 15px;
 }
 
 body {
   margin: 0;
-  font-family: 'Inter', sans-serif;
-  background-color: var(--bg-soft);
-  color: var(--text-main);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--bg-deep);
+  color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
-h1, h2, h3, h4, h5, h6, .font-premium {
+h1, h2, h3, h4, h5, h6, .font-display, .font-premium {
   font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.03em;
 }
 
-/* Neuromorphism Utilities */
-.nm-flat {
-  background: #f0f2f5;
-  box-shadow: 20px 20px 60px #ccd0d5, -20px -20px 60px #ffffff;
+/* Glassmorphism Surface - "Clinical Luminary" Core */
+.glass-surface {
+  background: rgba(19, 27, 46, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-glass);
+  box-shadow: 
+    0 4px 15px -1px rgba(0, 0, 0, 0.2),
+    0 10px 30px -5px rgba(0, 0, 0, 0.3);
 }
 
-.nm-flat-sm {
-  background: #f0f2f5;
-  box-shadow: 6px 6px 12px #ccd0d5, -6px -6px 12px #ffffff;
+.clinical-border {
+  position: relative;
 }
 
-.nm-inset {
-  background: #f0f2f5;
-  box-shadow: inset 6px 6px 12px #ccd0d5, inset -6px -6px 12px #ffffff;
+.clinical-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(68, 221, 193, 0.3), rgba(68, 221, 193, 0.05), transparent);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
-.nm-button {
-  background: #f0f2f5;
-  box-shadow: 6px 6px 12px #ccd0d5, -6px -6px 12px #ffffff;
-  transition: all 0.2s ease;
+/* Bento Card - Clinical Variant */
+.bento-card {
+  background: var(--bg-surface);
+  border-radius: 2rem;
+  padding: 1.75rem;
+  border: 1px solid var(--border-glass);
+  box-shadow: 0 4px 20px -1px rgba(0, 0, 0, 0.2);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.nm-button:active {
-  box-shadow: inset 4px 4px 8px #ccd0d5, inset -4px -4px 8px #ffffff;
-  transform: scale(0.98);
+.bento-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(68, 221, 193, 0.2);
+  box-shadow: 0 15px 35px -12px rgba(68, 221, 193, 0.1);
 }
 
-/* Glassmorphism Utilities */
-.glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+/* Buttons - Clinical Luminary */
+.btn-clinical {
+  @apply bg-[#44ddc1] text-[#00382f] px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-[0_0_20px_rgba(68,221,193,0.2)] hover:shadow-[0_0_30px_rgba(68,221,193,0.4)] active:scale-95;
 }
 
-.glass-dark {
-  background: rgba(15, 23, 42, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.input-clinical {
+  @apply bg-[#0b1326] border border-[#3c4a46]/20 text-[#dae2fd] px-5 py-3 rounded-xl outline-none focus:border-[#44ddc1]/40 transition-all font-medium text-sm;
 }
 
 /* Premium Scrollbar */
-.scrollbar-thin::-webkit-scrollbar {
-  width: 5px;
-}
-.scrollbar-thin::-webkit-scrollbar-track {
-  background: transparent;
-}
+.scrollbar-thin::-webkit-scrollbar { width: 4px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 20px;
+  background: rgba(68, 221, 193, 0.1);
+  border-radius: 100px;
+}
+.scrollbar-thin:hover::-webkit-scrollbar-thumb { background: rgba(68, 221, 193, 0.3); }
+
+/* Animation Utilities */
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0px); }
+}
+
+/* GSAP/Tailwind Entry */
+.fade-in-clinical {
+  @apply animate-in fade-in duration-700;
 }

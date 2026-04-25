@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Activity, Shield, Zap, MessageSquare, ChevronRight, Bot, Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
+<<<<<<< HEAD
 
 const ScrambleText = ({ text }: { text: string }) => {
   const [display, setDisplay] = useState('');
@@ -23,6 +24,9 @@ const ScrambleText = ({ text }: { text: string }) => {
 
   return <span>{display}</span>;
 };
+=======
+import { motion } from 'framer-motion';
+>>>>>>> c5ff22881aaa45231237457a151f711c497b142d
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -159,6 +163,7 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+<<<<<<< HEAD
 
       {/* Footer */}
       <footer className="py-20 px-10 border-t border-gray-100 bg-gray-50/50">
@@ -179,6 +184,8 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+=======
+>>>>>>> c5ff22881aaa45231237457a151f711c497b142d
     </div>
   );
 }
