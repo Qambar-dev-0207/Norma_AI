@@ -1,81 +1,76 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
-  --bg-soft: #f8fafc;
-  --purple-primary: #6d28d9;
-  --purple-soft: #f5f3ff;
-  --text-main: #0f172a;
+  --bg-soft: #f0f2f5;
+  --purple-primary: #7c3aed;
+  --purple-soft: #ede9fe;
+  --text-main: #1e293b;
   --text-light: #64748b;
-  --font-heading: 'Cormorant Garamond', serif;
-  --font-ui: 'Manrope', sans-serif;
 }
 
 body {
   margin: 0;
-  font-family: var(--font-ui);
+  font-family: 'Inter', sans-serif;
   background-color: var(--bg-soft);
   color: var(--text-main);
   -webkit-font-smoothing: antialiased;
-  letter-spacing: -0.01em;
 }
 
 h1, h2, h3, h4, h5, h6, .font-premium {
-  font-family: var(--font-heading);
-  letter-spacing: -0.01em;
+  font-family: 'Outfit', sans-serif;
 }
 
-/* Neuromorphism Utilities - Softer & More Professional */
+/* Neuromorphism Utilities */
 .nm-flat {
-  background: #f8fafc;
-  box-shadow: 15px 15px 35px #e2e8f0, -15px -15px 35px #ffffff;
+  background: #f0f2f5;
+  box-shadow: 20px 20px 60px #ccd0d5, -20px -20px 60px #ffffff;
 }
 
 .nm-flat-sm {
-  background: #f8fafc;
-  box-shadow: 6px 6px 15px #e2e8f0, -6px -6px 15px #ffffff;
+  background: #f0f2f5;
+  box-shadow: 6px 6px 12px #ccd0d5, -6px -6px 12px #ffffff;
 }
 
 .nm-inset {
-  background: #f8fafc;
-  box-shadow: inset 4px 4px 10px #e2e8f0, inset -4px -4px 10px #ffffff;
+  background: #f0f2f5;
+  box-shadow: inset 6px 6px 12px #ccd0d5, inset -6px -6px 12px #ffffff;
 }
 
 .nm-button {
-  background: #f8fafc;
-  box-shadow: 8px 8px 16px #e2e8f0, -8px -8px 16px #ffffff;
-  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-}
-
-.nm-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 12px 12px 25px #e2e8f0, -12px -12px 25px #ffffff;
-  background: #ffffff;
+  background: #f0f2f5;
+  box-shadow: 6px 6px 12px #ccd0d5, -6px -6px 12px #ffffff;
+  transition: all 0.2s ease;
 }
 
 .nm-button:active {
-  box-shadow: inset 4px 4px 8px #e2e8f0, inset -4px -4px 8px #ffffff;
-  transform: scale(0.97) translateY(0);
+  box-shadow: inset 4px 4px 8px #ccd0d5, inset -4px -4px 8px #ffffff;
+  transform: scale(0.98);
 }
 
-/* Sophisticated Glassmorphism */
+/* Glassmorphism Utilities */
 .glass {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-dark {
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Premium Scrollbar */
 .scrollbar-thin::-webkit-scrollbar {
-  width: 4px;
+  width: 5px;
 }
 .scrollbar-thin::-webkit-scrollbar-track {
   background: transparent;
 }
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #e2e8f0;
+  background: #cbd5e1;
   border-radius: 20px;
 }
