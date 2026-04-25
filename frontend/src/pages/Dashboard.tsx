@@ -71,7 +71,7 @@ export default function Dashboard() {
         headers: { Authorization: `Bearer ${token}` }
       });
       setShowPatientModal(false);
-      setPatientForm({ full_name: '', phone: '', address: '', medical_notes: '' });
+      setPatientForm({ full_name: '', phone_number: '', address: '', medical_notes: '' });
       fetchData();
     } catch (err) { console.error(err); }
   };
@@ -262,7 +262,7 @@ export default function Dashboard() {
                   </div>
                   <div className="space-y-3">
                      <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-2">Secure Contact Axis</label>
-                     <input type="text" required placeholder="+1..." className="w-full nm-inset pl-6 pr-6 py-5 rounded-2xl outline-none focus:ring-4 focus:ring-purple-600/5 transition-all text-sm font-bold text-slate-800 border-2 border-transparent focus:border-purple-100" value={patientForm.phone} onChange={e => setPatientForm({...patientForm, phone: e.target.value})} />
+                     <input type="text" required placeholder="+1..." className="w-full nm-inset pl-6 pr-6 py-5 rounded-2xl outline-none focus:ring-4 focus:ring-purple-600/5 transition-all text-sm font-bold text-slate-800 border-2 border-transparent focus:border-purple-100" value={patientForm.phone_number} onChange={e => setPatientForm({...patientForm, phone_number: e.target.value})} />
                   </div>
                   <button type="submit" className="w-full bg-zinc-900 text-white py-6 rounded-[1.8rem] font-black uppercase tracking-[0.4em] text-[10px] hover:bg-purple-600 shadow-xl shadow-zinc-900/10 active:scale-95 transition-all">Authorize Admission</button>
                </form>

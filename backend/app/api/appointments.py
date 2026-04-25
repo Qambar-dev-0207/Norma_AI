@@ -26,7 +26,7 @@ async def get_appointments(current_user: dict = Depends(get_current_user)):
                 "_id": 1,
                 "patient_id": 1,
                 "patient_name": "$patient.full_name",
-                "patient_phone": "$patient.phone",
+                "patient_phone": "$patient.phone_number",
                 "scheduled_at": 1,
                 "status": 1,
                 "type": 1
