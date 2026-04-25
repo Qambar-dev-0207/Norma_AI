@@ -36,118 +36,120 @@ export default function AdminDashboard() {
   }, []);
 
   const systemMetrics = [
-    { label: 'Cloud Latency', value: '14ms', status: 'Optimal', icon: Globe, color: 'text-emerald-500' },
-    { label: 'Database Health', value: '99.9%', status: 'Synced', icon: Database, color: 'text-violet-600' },
-    { label: 'Neural Engine', value: 'Active', status: 'Protocol 2.5', icon: Cpu, color: 'text-blue-500' },
-    { label: 'Security Mesh', value: 'Encrypted', status: 'AES-256', icon: Shield, color: 'text-violet-600' },
+    { label: 'Cloud Latency', value: '14ms', status: 'Optimal', icon: Globe, color: 'text-black' },
+    { label: 'Database Health', value: '99.9%', status: 'Synced', icon: Database, color: 'text-[#7c3aed]' },
+    { label: 'Neural Engine', value: 'Active', status: 'Core v3.0', icon: Cpu, color: 'text-black' },
+    { label: 'Security Mesh', value: 'Protected', status: 'AES-512', icon: Shield, color: 'text-[#7c3aed]' },
   ];
 
   if (loading) {
     return (
-      <div className="h-full flex items-center justify-center">
-        <Loader2 className="animate-spin text-violet-600" size={48} />
+      <div className="h-full flex items-center justify-center bg-white">
+        <Loader2 className="animate-spin text-black" size={32} />
       </div>
     );
   }
 
   return (
-    <div className="max-w-[1400px] mx-auto space-y-16 animate-in fade-in duration-1000 pb-20 relative">
+    <div className="max-w-[1400px] mx-auto space-y-12 animate-in fade-in duration-700 relative">
       
       <AnimatePresence>
         {toast && (
           <motion.div 
-            initial={{ opacity: 0, y: -50 }}
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            className="fixed top-10 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-10 py-5 rounded-full flex items-center gap-3 shadow-2xl font-black uppercase tracking-widest text-[10px]"
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-8 left-1/2 -translate-x-1/2 z-50 bg-black text-white px-8 py-3.5 rounded-xl flex items-center gap-3 shadow-2xl font-black uppercase tracking-widest text-[10px]"
           >
-            <Activity size={20} className="text-violet-400" />
+            <Activity size={16} className="text-[#7c3aed]" />
             {toast}
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Admin Header from Image */}
-      <header className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8 pt-8">
-        <div className="space-y-4">
+      <header className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8">
+        <div className="space-y-3">
           <div className="flex items-center gap-3">
-             <div className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.5)]" />
-             <span className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em]">System Administrator Privileges Active</span>
+             <div className="w-2.5 h-2.5 rounded-full bg-[#7c3aed]" />
+             <span className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.4em]">Administrative Authority Active</span>
           </div>
-          <h1 className="text-7xl font-black text-slate-900 tracking-tighter uppercase italic leading-none">System Control</h1>
-          <p className="text-slate-500 font-bold text-xl italic opacity-80">Master orchestration of the clinical network and neural nodes.</p>
+          <h1 className="text-6xl font-black text-black tracking-tighter uppercase leading-none">System Control</h1>
+          <p className="text-zinc-500 font-bold text-lg opacity-80">Orchestrating clinical neural nodes and distributed infrastructure.</p>
         </div>
         
-        <div className="flex items-center gap-12">
-           <button onClick={() => showToast('Command: Reboot Nodes Executed')} className="flex items-center gap-4 text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] hover:text-violet-600 transition-colors group">
-              <RefreshCw size={20} className="text-violet-600 group-hover:rotate-180 transition-transform duration-700" />
-              Reboot Nodes
+        <div className="flex items-center gap-6">
+           <button onClick={() => showToast('Protocol: Node Reset Initialized')} className="flex items-center gap-3 px-6 py-4 rounded-xl border border-zinc-200 text-[10px] font-black uppercase tracking-widest hover:bg-zinc-50 transition-all">
+              <RefreshCw size={16} className="text-[#7c3aed]" />
+              Reset Nodes
            </button>
-           <button className="bg-[#0b1326] text-white px-16 py-7 rounded-[1.8rem] text-[12px] font-black uppercase tracking-[0.4em] shadow-2xl shadow-slate-900/20 hover:bg-violet-600 transition-all active:scale-95 flex items-center gap-6">
-              <Send size={20} className="text-violet-400" />
+           <button className="bg-black text-white px-10 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#7c3aed] transition-all active:scale-95 flex items-center gap-4">
+              <Terminal size={16} />
               Open Console
            </button>
         </div>
       </header>
 
-      {/* SOTA Metrics Row - Exact Image Style */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {systemMetrics.map((m, i) => (
           <div 
             key={i}
-            className="nm-luxury p-12 aspect-square flex flex-col justify-between relative overflow-hidden group border-4 border-white/50"
+            className="bg-white p-10 border-2 border-zinc-50 flex flex-col justify-between aspect-square rounded-[2rem] hover:border-[#7c3aed]/20 transition-all group"
           >
             <div className="flex justify-between items-start">
-              <div className="w-20 h-20 rounded-[2rem] bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-300 transition-all group-hover:bg-white group-hover:shadow-lg group-hover:text-violet-600">
-                 <m.icon size={36} className={m.color} />
+              <div className="w-16 h-16 rounded-2xl bg-zinc-50 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-all">
+                 <m.icon size={28} className={m.color} />
               </div>
-              <span className={cn("px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest", 
-                m.status === 'Optimal' || m.status === 'Synced' ? 'bg-emerald-50 text-emerald-500' : 'bg-violet-50 text-violet-600')}>
+              <span className="px-3 py-1 bg-zinc-50 text-black text-[9px] font-black uppercase tracking-widest border border-zinc-100">
                 {m.status}
               </span>
             </div>
             
-            <div className="space-y-4">
-              <p className="text-[12px] font-black text-slate-400 uppercase tracking-[0.4em]">{m.label}</p>
-              <p className="text-6xl font-black text-slate-900 tracking-tighter leading-none">{m.value}</p>
+            <div className="space-y-2">
+              <p className="text-[11px] font-black text-zinc-400 uppercase tracking-[0.3em]">{m.label}</p>
+              <p className="text-5xl font-black text-black tracking-tighter leading-none">{m.value}</p>
             </div>
           </div>
         ))}
       </section>
 
-      {/* Bottom Node Bar from Image */}
-      <div className="nm-flat p-4 rounded-full border border-white flex items-center justify-between px-12 bg-white/80 backdrop-blur-md">
-         <div className="flex items-center gap-4">
-            <div className="w-3 h-3 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.5)]" />
-            <span className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Node Alpha Online</span>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+         <div className="lg:col-span-2 bg-black text-white p-10 rounded-[2.5rem] relative overflow-hidden">
+            <div className="relative z-10">
+               <h3 className="text-2xl font-black uppercase tracking-tighter mb-2 italic">Neural Activity</h3>
+               <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest mb-8">Node Alpha Response Mesh</p>
+               
+               <div className="space-y-4">
+                  {[
+                    { node: 'Core Sentinel', status: 'Online', load: '14%' },
+                    { node: 'Identity Node', status: 'Online', load: '32%' },
+                    { node: 'Sync Relay', status: 'Optimizing', load: '8%' },
+                  ].map((node, i) => (
+                    <div key={i} className="flex items-center justify-between p-5 bg-zinc-900 rounded-2xl border border-white/5">
+                       <span className="text-sm font-black uppercase italic">{node.node}</span>
+                       <div className="flex items-center gap-8">
+                          <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Load: {node.load}</span>
+                          <span className="text-[10px] font-black text-[#7c3aed] uppercase tracking-widest animate-pulse">{node.status}</span>
+                       </div>
+                    </div>
+                  ))}
+               </div>
+            </div>
+            <div className="absolute top-0 right-0 p-12 opacity-10">
+               <Sparkles size={180} />
+            </div>
          </div>
-         
-         <div className="flex items-center gap-16">
-            {['Diagnostics', 'Encounters', 'Global Registry'].map(item => (
-              <button key={item} className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] hover:text-violet-600 transition-colors">
-                {item}
-              </button>
-            ))}
-         </div>
-      </div>
 
-      {/* Floating Chat Icon from Image */}
-      <div className="fixed bottom-12 right-12 z-[100]">
-         <div className="relative group">
-            <button className="w-20 h-20 rounded-[1.8rem] bg-violet-600 text-white flex items-center justify-center shadow-2xl shadow-violet-500/40 hover:scale-110 transition-all active:scale-95">
-               <MessageSquare size={32} />
+         <div className="bg-[#7c3aed] text-white p-10 rounded-[2.5rem] flex flex-col justify-between">
+            <div>
+               <h3 className="text-2xl font-black uppercase tracking-tighter mb-4 italic leading-none">Security<br />Integrity</h3>
+               <p className="text-white/60 text-xs font-bold leading-relaxed">Automatic quantum-safe rotation completed 2h ago. All nodes synchronized.</p>
+            </div>
+            <button onClick={() => showToast('Full System Audit Initiated')} className="w-full bg-white text-black py-4 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all">
+               Run Full Audit
             </button>
-            <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full border-4 border-white animate-pulse" />
          </div>
       </div>
-    </div>
-  );
-}
 
-function MessageSquare({ size }: { size: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-    </svg>
+    </div>
   );
 }

@@ -2,12 +2,11 @@
 @import "tailwindcss";
 
 :root {
-  --norma-purple: #8b5cf6;
-  --norma-navy: #0f172a;
-  --norma-bg: #f8fafc;
+  --norma-purple: #7c3aed;
+  --norma-black: #000000;
   --norma-white: #ffffff;
-  --norma-teal: #10b981;
-  --norma-border: rgba(226, 232, 240, 0.8);
+  --norma-gray: #f4f4f5;
+  --norma-border: #e4e4e7;
 }
 
 html {
@@ -18,8 +17,8 @@ html {
 body {
   margin: 0;
   font-family: 'Plus Jakarta Sans', sans-serif;
-  background-color: var(--norma-bg);
-  color: var(--norma-navy);
+  background-color: var(--norma-white);
+  color: var(--norma-black);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
@@ -29,63 +28,41 @@ h1, h2, h3, h4, h5, h6, .font-display {
   letter-spacing: -0.02em;
 }
 
-/* Neumorphic Tokens from Image */
-.nm-flat {
+/* Sharp Contrast Components */
+.card-white {
   background: var(--norma-white);
-  box-shadow: 10px 10px 20px #e2e8f0, -10px -10px 20px #ffffff;
+  border: 1px solid var(--norma-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
-.nm-inset {
-  background: var(--norma-white);
-  box-shadow: inset 6px 6px 12px #e2e8f0, inset -6px -6px 12px #ffffff;
+.card-black {
+  background: var(--norma-black);
+  color: var(--norma-white);
+  border: 1px solid var(--norma-black);
 }
 
-.nm-button {
-  background: var(--norma-white);
-  box-shadow: 4px 4px 10px #e2e8f0, -4px -4px 10px #ffffff;
-  transition: all 0.3s ease;
+.btn-purple {
+  @apply bg-[#7c3aed] text-white px-8 py-4 rounded-xl font-black text-[11px] uppercase tracking-[0.2em] transition-all hover:bg-black active:scale-95;
 }
 
-.nm-button:active {
-  box-shadow: inset 4px 4px 10px #e2e8f0, inset -4px -4px 10px #ffffff;
-  transform: scale(0.98);
-}
-
-.nm-luxury {
-  background: var(--norma-white);
-  border-radius: 3rem;
-  border: 1px solid var(--norma-white);
-  box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.05);
-}
-
-/* Glassmorphism Variant */
-.glass-luxury {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+.btn-black {
+  @apply bg-black text-white px-8 py-4 rounded-xl font-black text-[11px] uppercase tracking-[0.2em] transition-all hover:bg-[#7c3aed] active:scale-95;
 }
 
 /* Specific UI Elements */
 .status-pill {
-  @apply px-3 py-1 rounded-lg font-black text-[9px] uppercase tracking-widest;
+  @apply px-3 py-1 rounded-lg font-black text-[9px] uppercase tracking-widest border;
 }
 
-.status-teal {
-  @apply bg-emerald-50 text-emerald-500 border border-emerald-100;
+.status-purple {
+  @apply bg-violet-50 text-violet-600 border-violet-100;
 }
 
-.card-title {
-  @apply text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4;
-}
-
-.card-value {
-  @apply text-5xl font-black text-slate-900 tracking-tighter;
-}
-
-/* Sidebar Custom Scrollbar */
-.scrollbar-thin::-webkit-scrollbar { width: 4px; }
-.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+/* Custom Scrollbar - Black/Purple */
+.scrollbar-thin::-webkit-scrollbar { width: 5px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: var(--norma-white); }
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.1);
-  border-radius: 100px;
+  background: var(--norma-black);
+  border-radius: 0;
 }
+.scrollbar-thin:hover::-webkit-scrollbar-thumb { background: var(--norma-purple); }

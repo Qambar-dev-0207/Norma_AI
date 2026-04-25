@@ -8,7 +8,7 @@ export default function Sidebar() {
 
   const menuItems = [
     { path: '/dashboard', icon: Home, label: 'Overview', roles: ['doctor', 'receptionist'] },
-    { path: '/admin-dashboard', icon: Shield, label: 'Admin Command', roles: ['admin'] },
+    { path: '/admin-dashboard', icon: Shield, label: 'Admin Panel', roles: ['admin'] },
     { path: '/inbox', icon: MessageSquare, label: 'Inbox', roles: ['doctor', 'receptionist', 'admin'] },
     { path: '/appointments', icon: Calendar, label: 'Schedule', roles: ['admin', 'doctor', 'receptionist'] },
     { path: '/patients', icon: Users, label: 'Patients', roles: ['admin', 'doctor', 'receptionist'] },
@@ -18,19 +18,19 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="w-80 h-screen flex flex-col p-8 z-20 relative">
-      <div className="nm-flat rounded-[3rem] flex-1 flex flex-col overflow-hidden border border-white/40 p-4">
-        <div className="p-8 mb-4 flex items-center justify-between">
+    <div className="w-72 h-screen flex flex-col p-6 z-20 relative bg-black">
+      <div className="flex-1 flex flex-col overflow-hidden border border-white/5 rounded-[2rem] bg-zinc-900/30 p-2">
+        <div className="p-8 mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-violet-600 flex items-center justify-center text-white shadow-xl shadow-violet-200">
+            <div className="w-12 h-12 rounded-xl bg-[#7c3aed] flex items-center justify-center text-white shadow-2xl shadow-violet-500/20">
               <Heart size={26} fill="white" />
             </div>
-            <h1 className="text-2xl font-black text-slate-800 tracking-tighter uppercase italic">Norma</h1>
+            <h1 className="text-2xl font-black text-white tracking-tighter uppercase italic">Norma</h1>
           </div>
         </div>
         
         <div className="flex-1 overflow-y-auto px-4 scrollbar-thin">
-          <nav className="space-y-4">
+          <nav className="space-y-2">
             {menuItems.filter(item => item.roles.includes(role)).map((item) => {
               const isActive = location.pathname === item.path;
               const Icon = item.icon;
@@ -41,19 +41,19 @@ export default function Sidebar() {
                   className="block group"
                 >
                   <motion.div 
-                    whileHover={{ x: 5 }}
-                    className={`flex items-center gap-5 px-6 py-5 rounded-[2rem] transition-all duration-300 relative ${
+                    whileHover={{ x: 5, backgroundColor: 'rgba(255,255,255,0.05)' }}
+                    className={`flex items-center gap-5 px-6 py-4 rounded-xl transition-all duration-300 relative ${
                       isActive 
-                        ? 'nm-inset text-violet-600 font-black' 
-                        : 'text-slate-400 hover:text-slate-600'
+                        ? 'bg-[#7c3aed] text-white font-black' 
+                        : 'text-zinc-500 hover:text-white'
                     }`}
                   >
-                    <Icon size={22} className={isActive ? 'text-violet-600' : 'text-slate-300 group-hover:text-slate-400'} />
-                    <span className="text-sm uppercase tracking-widest">{item.label}</span>
+                    <Icon size={20} className={isActive ? 'text-white' : 'text-zinc-600 group-hover:text-white'} />
+                    <span className="text-xs uppercase font-black tracking-widest">{item.label}</span>
                     {isActive && (
                       <motion.div 
                         layoutId="activePill"
-                        className="absolute right-6 w-2 h-2 rounded-full bg-violet-600 shadow-[0_0_12px_rgba(139,92,246,0.6)]" 
+                        className="absolute right-4 w-1.5 h-6 rounded-full bg-white/20" 
                       />
                     )}
                   </motion.div>
@@ -63,21 +63,21 @@ export default function Sidebar() {
           </nav>
         </div>
         
-        <div className="p-8 border-t border-slate-50">
+        <div className="p-6">
           <Link 
             to="/" 
             onClick={() => { localStorage.clear(); }}
-            className="nm-button flex items-center justify-center gap-4 px-6 py-5 text-slate-400 hover:text-red-500 rounded-[2rem] transition-all group font-black uppercase tracking-widest text-[10px]"
+            className="flex items-center justify-center gap-4 px-6 py-5 bg-black text-zinc-500 hover:text-red-500 border border-white/5 rounded-2xl transition-all group font-black uppercase tracking-widest text-[10px]"
           >
-            <LogOut size={20} />
+            <LogOut size={18} />
             Sign Out
           </Link>
         </div>
       </div>
 
-      <div className="mt-8 px-8 flex items-center gap-3 opacity-30 hover:opacity-100 transition-opacity">
-        <Info size={14} className="text-slate-400" />
-        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Clinical Mesh v2.5.0 Stable</p>
+      <div className="mt-6 px-4 flex items-center gap-3 opacity-30">
+        <Info size={14} className="text-zinc-600" />
+        <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest leading-none">NORMA CORE v3.0</p>
       </div>
     </div>
   );

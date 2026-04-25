@@ -66,7 +66,7 @@ export default function Doctors() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Archive this doctor record? This action will restrict scheduling visibility.')) return;
+    if (!window.confirm('Archive this doctor record?')) return;
     const token = localStorage.getItem('token');
     try {
       await axios.delete(`http://localhost:5000/api/doctors/${id}`, {
@@ -84,236 +84,170 @@ export default function Doctors() {
 
   if (loading) {
     return (
-      <div className="h-full flex flex-col items-center justify-center space-y-6">
-        <div className="relative">
-           <div className="absolute inset-0 blur-2xl bg-blue-500/20 rounded-full animate-pulse" />
-           <Loader2 className="animate-spin text-blue-600 relative z-10" size={48} />
-        </div>
-        <p className="text-gray-400 font-black uppercase tracking-[0.3em] text-[10px] animate-pulse">Syncing Provider Mesh...</p>
+      <div className="h-full flex items-center justify-center bg-white">
+        <Loader2 className="animate-spin text-black" size={32} />
       </div>
     );
   }
 
   return (
-    <div className="space-y-12 animate-in fade-in duration-1000 pb-20">
+    <div className="max-w-[1400px] mx-auto space-y-12 animate-in fade-in duration-700 pb-20">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
         <div>
-          <h1 className="text-4xl font-black text-zinc-900 tracking-tight uppercase">Medical Providers</h1>
-          <p className="text-gray-500 mt-2 font-medium text-lg italic">Comprehensive doctor and specialist lifecycle management.</p>
+          <h1 className="text-4xl font-black text-black tracking-tight uppercase italic">Provider Registry</h1>
+          <p className="text-zinc-500 mt-2 font-bold text-lg">Comprehensive specialist and clinic personnel management.</p>
         </div>
         <button 
           onClick={() => { setEditingDoctor(null); setFormData(initialForm); setError(''); setShowModal(true); }}
-          className="group bg-[#0b1326] text-white px-10 py-5 rounded-[1.8rem] text-sm font-black shadow-2xl shadow-zinc-900/20 hover:bg-violet-600 transition-all flex items-center gap-4"
+          className="group bg-black text-white px-10 py-5 rounded-xl text-xs font-black uppercase tracking-[0.2em] shadow-2xl hover:bg-[#7c3aed] transition-all flex items-center gap-4 active:scale-95"
         >
-          <Plus size={20} className="text-violet-400 group-hover:rotate-90 transition-transform duration-500" /> 
-          Add Provider
+          <Plus size={18} className="text-white group-hover:rotate-90 transition-transform duration-500" /> 
+          Register Provider
         </button>
       </div>
 
       <div className="flex flex-col md:flex-row gap-8">
-        <div className="flex-1 nm-inset p-5 rounded-[1.8rem] border border-white flex items-center gap-5 focus-within:ring-4 focus-within:ring-violet-500/5 focus-within:border-violet-200 transition-all">
-          <Search size={22} className="text-slate-300 ml-3" />
+        <div className="flex-1 bg-zinc-50 p-5 rounded-xl border border-zinc-200 flex items-center gap-5 focus-within:bg-white focus-within:ring-4 focus-within:ring-violet-500/5 transition-all">
+          <Search size={20} className="text-zinc-400 ml-3" />
           <input 
             type="text" 
-            placeholder="Search by name, specialty, or WhatsApp number..." 
-            className="bg-transparent border-none outline-none text-slate-900 w-full py-2 font-bold text-sm placeholder-slate-300"
+            placeholder="Identify provider by name or specialty..." 
+            className="bg-transparent border-none outline-none text-black w-full py-2 font-bold text-sm placeholder-zinc-300"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <button className="nm-button px-8 py-5 rounded-[1.8rem] text-slate-400 font-black text-[10px] uppercase tracking-[0.3em] flex items-center gap-3 hover:text-violet-600 transition-all">
+        <button className="px-8 py-5 bg-white border border-zinc-200 rounded-xl text-zinc-500 font-black text-[10px] uppercase tracking-[0.3em] flex items-center gap-3 hover:text-black hover:border-black transition-all">
           <Filter size={18} />
           Refine Search
         </button>
       </div>
 
-      <div className="nm-luxury rounded-[3.5rem] border border-white overflow-hidden">
+      <div className="bg-white rounded-[2rem] border-2 border-zinc-50 overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-slate-50/50">
-                <th className="px-10 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Provider Identity</th>
-                <th className="px-10 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Specialty & License</th>
-                <th className="px-10 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Contact Axis</th>
-                <th className="px-10 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Financial Base</th>
-                <th className="px-10 py-8"></th>
+              <tr className="bg-zinc-50 border-b border-zinc-100">
+                <th className="px-10 py-6 text-[10px] font-black text-zinc-400 uppercase tracking-[0.3em]">Provider Identity</th>
+                <th className="px-10 py-6 text-[10px] font-black text-zinc-400 uppercase tracking-[0.3em]">Specialty & License</th>
+                <th className="px-10 py-6 text-[10px] font-black text-zinc-400 uppercase tracking-[0.3em]">Contact Axis</th>
+                <th className="px-10 py-6 text-[10px] font-black text-zinc-400 uppercase tracking-[0.3em]">Financial Base</th>
+                <th className="px-10 py-6"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-zinc-50">
               {filteredDoctors.map((doctor) => (
-                <tr key={doctor._id} className="hover:bg-slate-50/80 transition-all group">
+                <tr key={doctor._id} className="hover:bg-zinc-50/50 transition-all group">
                   <td className="px-10 py-8">
                     <div className="flex items-center gap-5">
-                      <div className="w-14 h-14 rounded-2xl bg-zinc-900 border border-slate-800 flex items-center justify-center text-xs font-black text-violet-400 shadow-xl group-hover:scale-105 transition-transform duration-500">
+                      <div className="w-14 h-14 rounded-xl bg-black flex items-center justify-center text-xs font-black text-[#7c3aed] group-hover:scale-105 transition-transform duration-500">
                         {doctor.full_name?.split(' ').map((n: any) => n[0]).join('') || 'D'}
                       </div>
                       <div>
-                        <p className="text-base font-black text-slate-900 group-hover:text-violet-600 transition-colors tracking-tight">{doctor.full_name}</p>
-                        <div className={`mt-1 flex items-center gap-2 px-2 py-0.5 rounded-lg border w-fit ${doctor.is_active ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 'bg-slate-100 border-slate-200 text-slate-500'}`}>
-                          <div className={`w-1.5 h-1.5 rounded-full ${doctor.is_active ? 'bg-emerald-600 animate-pulse' : 'bg-slate-400'}`} />
-                          <span className="text-[8px] font-black uppercase tracking-widest">{doctor.is_active ? 'Active' : 'Inactive'}</span>
+                        <p className="text-base font-black text-black group-hover:text-[#7c3aed] transition-colors tracking-tight">{doctor.full_name}</p>
+                        <div className={`mt-1.5 flex items-center gap-2 px-2 py-0.5 rounded border w-fit ${doctor.is_active ? 'bg-black text-white border-black' : 'bg-zinc-100 text-zinc-400 border-zinc-200'}`}>
+                          <span className="text-[8px] font-black uppercase tracking-widest leading-none">{doctor.is_active ? 'Authorized' : 'Archived'}</span>
                         </div>
                       </div>
                     </div>
                   </td>
                   <td className="px-10 py-8">
-                    <p className="text-sm font-black text-slate-900 flex items-center gap-2">
-                       <Stethoscope size={14} className="text-violet-400" />
+                    <p className="text-sm font-bold text-black flex items-center gap-2">
                        {doctor.specialty || 'General Practice'}
                     </p>
-                    <p className="text-[10px] text-slate-400 font-bold tracking-tight mt-1 uppercase italic">Lic: {doctor.license_number || 'N/A'}</p>
+                    <p className="text-[10px] text-zinc-400 font-bold tracking-tight mt-1 uppercase italic">Lic: {doctor.license_number || 'N/A'}</p>
                   </td>
                   <td className="px-10 py-8">
-                    <p className="text-sm font-black text-slate-900 flex items-center gap-2">
-                       <Phone size={14} className="text-violet-400" />
+                    <p className="text-sm font-bold text-black flex items-center gap-2">
                        {doctor.whatsapp_number}
                     </p>
-                    <p className="text-[10px] text-slate-400 font-bold tracking-tight mt-1 lowercase italic flex items-center gap-2">
-                       <Mail size={12} className="text-slate-400" />
-                       {doctor.email || 'no-email'}
-                    </p>
+                    <p className="text-[10px] text-[#7c3aed] font-bold tracking-tight mt-1 lowercase italic">{doctor.email || 'no-mail'}</p>
                   </td>
                   <td className="px-10 py-8">
-                    <span className="text-[10px] font-black px-4 py-2 bg-white rounded-xl border-2 border-slate-100 text-slate-900 uppercase tracking-widest shadow-sm">
+                    <span className="text-[10px] font-black px-4 py-2 bg-black text-white rounded-lg uppercase tracking-widest">
                       ${doctor.consultation_fee?.toFixed(2) || '0.00'}
                     </span>
                   </td>
                   <td className="px-10 py-8 text-right relative">
                     <button 
                       onClick={() => setActiveMenu(activeMenu === doctor._id ? null : doctor._id)}
-                      className="text-slate-300 hover:text-violet-600 p-3 rounded-2xl nm-button shadow-none"
+                      className="text-zinc-300 hover:text-black p-3 rounded-xl border border-transparent hover:border-zinc-200 transition-all"
                     >
-                      <MoreVertical size={24} />
+                      <MoreVertical size={22} />
                     </button>
                     
                     {activeMenu === doctor._id && (
-                      <div className="absolute right-16 top-1/2 -translate-y-1/2 bg-white border border-slate-100 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] z-50 py-3 w-56 animate-in zoom-in-95 duration-300">
+                      <div className="absolute right-16 top-1/2 -translate-y-1/2 bg-black text-white rounded-xl shadow-2xl z-50 py-3 w-56 animate-in zoom-in-95 duration-300">
                         <button 
                           onClick={() => {
                             setEditingDoctor(doctor);
-                            setFormData({
-                              ...doctor
-                            });
+                            setFormData({ ...doctor });
                             setShowModal(true);
                             setActiveMenu(null);
                           }}
-                          className="w-full flex items-center justify-between px-6 py-3 text-sm font-black text-slate-900 hover:bg-violet-50 hover:text-violet-600 transition-all group/btn"
+                          className="w-full flex items-center justify-between px-6 py-3 text-xs font-black uppercase tracking-widest hover:bg-[#7c3aed] transition-all"
                         >
-                          Modify Profile <ArrowUpRight size={16} className="text-slate-300 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                          Modify Profile <ArrowUpRight size={14} />
                         </button>
-                        <div className="h-[1px] bg-slate-50 my-1 mx-4" />
+                        <div className="h-[1px] bg-white/5 my-1 mx-4" />
                         <button 
                           onClick={() => { handleDelete(doctor._id); setActiveMenu(null); }}
-                          className="w-full flex items-center justify-between px-6 py-3 text-sm font-black text-red-500 hover:bg-red-50 transition-all"
+                          className="w-full flex items-center justify-between px-6 py-3 text-xs font-black uppercase tracking-widest text-red-400 hover:bg-red-500 hover:text-white transition-all"
                         >
-                          Archive Provider <Trash2 size={16} />
+                          Archive <Trash2 size={14} />
                         </button>
                       </div>
                     )}
                   </td>
                 </tr>
               ))}
-              {filteredDoctors.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="px-10 py-32 text-center">
-                    <div className="flex flex-col items-center gap-4 opacity-30 grayscale">
-                       <Stethoscope size={64} className="text-gray-400" />
-                       <p className="text-lg font-bold text-gray-500 italic">No medical providers found in the registry.</p>
-                    </div>
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 bg-zinc-900/70 backdrop-blur-3xl flex items-center justify-center z-[100] p-6">
-          <div className="bg-white border border-gray-200 rounded-[3.5rem] w-full max-w-5xl shadow-[0_60px_120px_-20px_rgba(0,0,0,0.4)] overflow-hidden animate-in zoom-in-95 duration-700">
-            <div className="p-12 md:p-16 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xl flex items-center justify-center z-[100] p-6">
+          <div className="bg-white border-4 border-black rounded-[3rem] w-full max-w-5xl shadow-[0_60px_120px_-20px_rgba(0,0,0,0.4)] overflow-hidden animate-in zoom-in-95 duration-700">
+            <div className="p-12 border-b-2 border-zinc-50 flex justify-between items-center bg-zinc-50/50">
               <div>
-                <h2 className="text-4xl font-black text-zinc-900 tracking-tighter uppercase leading-none">
-                  {editingDoctor ? 'Modify Provider' : 'Add New Provider'}
+                <h2 className="text-4xl font-black text-black tracking-tighter uppercase leading-none">
+                  {editingDoctor ? 'Modify Identity' : 'Register Asset'}
                 </h2>
-                <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.4em] mt-4">Provider Identity Registration</p>
+                <p className="text-[10px] text-[#7c3aed] font-black uppercase tracking-[0.4em] mt-4 italic">Personnel Configuration Matrix</p>
               </div>
-              <button onClick={() => setShowModal(false)} className="bg-white p-5 rounded-[1.8rem] text-gray-300 hover:text-red-500 border border-gray-100 hover:border-red-100 transition-all shadow-sm">
-                <X size={32} />
+              <button onClick={() => setShowModal(false)} className="bg-black text-white p-5 rounded-2xl hover:bg-[#7c3aed] transition-all shadow-xl">
+                <X size={28} />
               </button>
             </div>
 
-            {error && (
-              <div className="mx-12 mt-10 bg-red-50 border-2 border-red-100 p-6 rounded-[2rem] flex items-center gap-5 text-red-500 text-xs font-black uppercase tracking-widest animate-in shake duration-500 shadow-xl shadow-red-500/5">
-                <AlertCircle size={24} />
-                {error}
-              </div>
-            )}
-            
-            <form onSubmit={handleSubmit} className="p-12 md:p-16 grid grid-cols-2 gap-x-16 gap-y-10 overflow-y-auto max-h-[65vh] scrollbar-thin">
-              {/* Primary Identity */}
-              <div className="col-span-2 flex items-center gap-6 mb-2">
-                <span className="text-[11px] font-black text-blue-600 uppercase tracking-[0.4em] whitespace-nowrap">Professional Identity</span>
-                <div className="h-[2px] w-full bg-gradient-to-r from-blue-100 to-transparent" />
+            <form onSubmit={handleSubmit} className="p-12 md:p-16 grid grid-cols-2 gap-10 overflow-y-auto max-h-[65vh] scrollbar-thin bg-white">
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-2">Full Name *</label>
+                <input type="text" required placeholder="Ex: Dr. Jane Doe" className="w-full bg-zinc-50 border-2 border-transparent text-black px-8 py-5 rounded-xl outline-none focus:bg-white focus:border-black transition-all text-base font-black shadow-inner" value={formData.full_name} onChange={e => setFormData({...formData, full_name: e.target.value})} />
               </div>
 
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] ml-2">Full Name *</label>
-                <div className="relative group">
-                  <User size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition-colors" />
-                  <input type="text" required placeholder="Ex: Dr. Jane Doe" className="w-full bg-gray-50 border-2 border-transparent text-zinc-900 pl-16 pr-8 py-6 rounded-[1.8rem] outline-none focus:bg-white focus:border-blue-200 transition-all text-base font-black shadow-inner" value={formData.full_name} onChange={e => setFormData({...formData, full_name: e.target.value})} />
-                </div>
+                <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-2">Specialty</label>
+                <input type="text" placeholder="e.g., Cardiology" className="w-full bg-zinc-50 border-2 border-transparent text-black px-8 py-5 rounded-xl outline-none focus:bg-white focus:border-black transition-all text-base font-black shadow-inner" value={formData.specialty} onChange={e => setFormData({...formData, specialty: e.target.value})} />
               </div>
 
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] ml-2">Specialty</label>
-                <div className="relative group">
-                  <Stethoscope size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition-colors" />
-                  <input type="text" placeholder="e.g., Cardiology" className="w-full bg-gray-50 border-2 border-transparent text-zinc-900 pl-16 pr-8 py-6 rounded-[1.8rem] outline-none focus:bg-white focus:border-blue-200 transition-all text-base font-black shadow-inner" value={formData.specialty} onChange={e => setFormData({...formData, specialty: e.target.value})} />
-                </div>
+                <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-2">WhatsApp Axis *</label>
+                <input type="text" required placeholder="+123..." className="w-full bg-zinc-50 border-2 border-transparent text-black px-8 py-5 rounded-xl outline-none focus:bg-white focus:border-black transition-all text-base font-black shadow-inner" value={formData.whatsapp_number} onChange={e => setFormData({...formData, whatsapp_number: e.target.value})} />
               </div>
 
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] ml-2">License Number</label>
-                <div className="relative group">
-                  <ShieldCheck size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition-colors" />
-                  <input type="text" placeholder="Medical License ID" className="w-full bg-gray-50 border-2 border-transparent text-zinc-900 pl-16 pr-8 py-6 rounded-[1.8rem] outline-none focus:bg-white focus:border-blue-200 transition-all text-base font-black shadow-inner" value={formData.license_number} onChange={e => setFormData({...formData, license_number: e.target.value})} />
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] ml-2">Consultation Fee</label>
-                <div className="relative group">
-                  <span className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 font-bold group-focus-within:text-blue-600 transition-colors">$</span>
-                  <input type="number" min="0" step="0.01" className="w-full bg-gray-50 border-2 border-transparent text-zinc-900 pl-12 pr-8 py-6 rounded-[1.8rem] outline-none focus:bg-white focus:border-blue-200 transition-all text-base font-black shadow-inner" value={formData.consultation_fee} onChange={e => setFormData({...formData, consultation_fee: parseFloat(e.target.value)})} />
+                <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-2">Consultation Fee</label>
+                <div className="relative">
+                   <span className="absolute left-6 top-1/2 -translate-y-1/2 text-zinc-400 font-black">$</span>
+                   <input type="number" min="0" step="0.01" className="w-full bg-zinc-50 border-2 border-transparent text-black pl-12 pr-8 py-5 rounded-xl outline-none focus:bg-white focus:border-black transition-all text-base font-black shadow-inner" value={formData.consultation_fee} onChange={e => setFormData({...formData, consultation_fee: parseFloat(e.target.value)})} />
                 </div>
               </div>
 
-              {/* Contact Info */}
-              <div className="col-span-2 flex items-center gap-6 mt-6 mb-2">
-                <span className="text-[11px] font-black text-blue-600 uppercase tracking-[0.4em] whitespace-nowrap">Contact Matrix</span>
-                <div className="h-[2px] w-full bg-gradient-to-r from-blue-100 to-transparent" />
-              </div>
-
-              <div className="space-y-4">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] ml-2">WhatsApp Number *</label>
-                <div className="relative group">
-                  <Phone size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition-colors" />
-                  <input type="text" required placeholder="+0..." className="w-full bg-gray-50 border-2 border-transparent text-zinc-900 pl-16 pr-8 py-6 rounded-[1.8rem] outline-none focus:bg-white focus:border-blue-200 transition-all text-base font-black shadow-inner" value={formData.whatsapp_number} onChange={e => setFormData({...formData, whatsapp_number: e.target.value})} />
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] ml-2">Email Address</label>
-                <div className="relative group">
-                  <Mail size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition-colors" />
-                  <input type="email" placeholder="doctor@clinic.net" className="w-full bg-gray-50 border-2 border-transparent text-zinc-900 pl-16 pr-8 py-6 rounded-[1.8rem] outline-none focus:bg-white focus:border-blue-200 transition-all text-base font-black shadow-inner" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
-                </div>
-              </div>
-
-              <div className="col-span-2 pt-10 flex gap-10">
-                <button type="button" onClick={() => setShowModal(false)} className="flex-1 bg-white text-gray-400 py-7 rounded-[2.2rem] font-black uppercase tracking-[0.3em] text-xs border-2 border-gray-100 hover:bg-gray-50 hover:text-zinc-900 transition-all shadow-sm">Discard Entry</button>
-                <button type="submit" className="flex-1 bg-zinc-900 text-white py-7 rounded-[2.2rem] font-black uppercase tracking-[0.3em] text-xs shadow-2xl shadow-zinc-900/20 hover:bg-blue-600 hover:-translate-y-1 transition-all active:scale-95">Commit Provider</button>
+              <div className="col-span-2 pt-10 flex gap-8">
+                <button type="button" onClick={() => setShowModal(false)} className="flex-1 bg-zinc-100 text-black py-6 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-zinc-200 transition-all">Discard Sequences</button>
+                <button type="submit" className="flex-1 bg-black text-white py-6 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-[#7c3aed] transition-all shadow-2xl active:scale-95">Commit Registration</button>
               </div>
             </form>
           </div>
