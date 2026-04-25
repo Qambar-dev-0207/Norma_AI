@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Calendar, Users, UploadCloud, Settings, LogOut, Shield, Heart, Info, MessageSquare } from 'lucide-react';
+import { Home, Calendar, Users, UploadCloud, Settings, LogOut, Shield, Heart, Info, MessageSquare, Stethoscope } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Sidebar() {
@@ -12,6 +12,7 @@ export default function Sidebar() {
     { path: '/inbox', icon: MessageSquare, label: 'Inbox', roles: ['doctor', 'receptionist', 'admin'] },
     { path: '/appointments', icon: Calendar, label: 'Schedule', roles: ['admin', 'doctor', 'receptionist'] },
     { path: '/patients', icon: Users, label: 'Patients', roles: ['admin', 'doctor', 'receptionist'] },
+    { path: '/doctors', icon: Stethoscope, label: 'Doctors', roles: ['admin', 'doctor', 'receptionist'] },
     { path: '/bulk-upload', icon: UploadCloud, label: 'Add Data', roles: ['admin', 'doctor'] },
     { path: '/settings', icon: Settings, label: 'Settings', roles: ['admin', 'doctor', 'receptionist'] },
   ];

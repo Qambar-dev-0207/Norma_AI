@@ -78,9 +78,8 @@ export default function Inbox() {
 
     try {
       const token = localStorage.getItem('token');
-      // Simulate sending via backend (which triggers Twilio)
-      await axios.post('http://localhost:5000/api/messages/webhook/whatsapp', 
-        new URLSearchParams({ From: `whatsapp:${activeThread._id}`, Body: text }),
+      await axios.post(`http://localhost:5000/api/messages/send?phone=${activeThread._id}&content=${encodeURIComponent(text)}`, 
+        {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
       fetchMessages(activeThread._id);

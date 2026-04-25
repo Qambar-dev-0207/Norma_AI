@@ -6,7 +6,8 @@ import {
   AlertTriangle, Server, ChevronRight, Search, Cpu, 
   Zap, Globe, ShieldCheck, HardDrive, RefreshCw, 
   Terminal, Lock, Fingerprint, Network, MoreVertical,
-  ShieldAlert, CheckCircle2, CloudLightning, Cpu as Brain
+  ShieldAlert, CheckCircle2, CloudLightning, Cpu as Brain,
+  Loader2
 } from 'lucide-react';
 import { cn } from '../utils/cn';
 
@@ -30,6 +31,12 @@ const itemVariants: any = {
 export default function AdminDashboard() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (message: string) => {
+    setToast(message);
+    setTimeout(() => setToast(null), 3000);
+  };
 
   useEffect(() => {
     const fetchAdminStats = async () => {
@@ -68,7 +75,22 @@ export default function AdminDashboard() {
   }
 
   return (
-    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="max-w-[1600px] mx-auto space-y-12 pb-20 px-4 font-premium">
+    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="max-w-[1600px] mx-auto space-y-12 pb-20 px-4 font-premium relative">
+      
+      <AnimatePresence>
+        {toast && (
+          <motion.div 
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            className="fixed top-10 left-1/2 -translate-x-1/2 z-50 bg-[#171f33] text-[#44ddc1] px-8 py-4 rounded-[2rem] flex items-center gap-3 shadow-2xl shadow-[#44ddc1]/20 font-black uppercase tracking-widest text-[10px] border border-[#44ddc1]/20"
+          >
+            <Activity size={18} className="text-[#44ddc1]" />
+            {toast}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Admin Header */}
       <header className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10">
         <div className="space-y-4">
@@ -81,11 +103,11 @@ export default function AdminDashboard() {
         </div>
         
         <div className="flex gap-6">
-           <button className="glass-surface px-10 py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] text-[#85948f] flex items-center gap-4 hover:text-[#44ddc1] border border-white/5 transition-all">
+           <button onClick={() => showToast('Nodes successfully reset and synchronized')} className="glass-surface px-10 py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] text-[#85948f] flex items-center gap-4 hover:text-[#44ddc1] border border-white/5 transition-all active:scale-95">
               <RefreshCw size={18} className="text-[#44ddc1]" />
               Reset Nodes
            </button>
-           <button className="bg-[#44ddc1] text-[#00382f] px-12 py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-[#44ddc1]/20 hover:shadow-[#44ddc1]/40 transition-all flex items-center gap-5">
+           <button onClick={() => showToast('System console uplink established')} className="bg-[#44ddc1] text-[#00382f] px-12 py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-[#44ddc1]/20 hover:shadow-[#44ddc1]/40 transition-all flex items-center gap-5 active:scale-95">
               <Terminal size={18} />
               System Console
            </button>
@@ -205,7 +227,7 @@ export default function AdminDashboard() {
                  ))}
               </div>
               
-              <button className="w-full mt-16 py-6 rounded-2xl bg-[#dae2fd] text-[#0b1326] text-[10px] font-black uppercase tracking-[0.4em] hover:bg-[#44ddc1] transition-all duration-700 shadow-2xl relative z-10">
+              <button onClick={() => showToast('Full Security Audit Initiated')} className="w-full mt-16 py-6 rounded-2xl bg-[#dae2fd] text-[#0b1326] text-[10px] font-black uppercase tracking-[0.4em] hover:bg-[#44ddc1] transition-all duration-700 shadow-2xl relative z-10 active:scale-95">
                  Full Security Audit
               </button>
            </motion.div>

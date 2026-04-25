@@ -1,11 +1,27 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Settings2, User, Shield, Bell, Database, Key, 
-  Smartphone, Monitor, Activity, CheckCircle2, ChevronRight
+  Smartphone, Monitor, Activity, CheckCircle2, ChevronRight,
+  Loader2
 } from 'lucide-react';
 import { cn } from '../utils/cn';
 
 export default function Settings() {
+  const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState(false);
+
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    // Simulate API call
+    setTimeout(() => {
+      setSaving(false);
+      setToast(true);
+      setTimeout(() => setToast(false), 3000);
+    }, 1500);
+  };
+
   const sections = [
     {
       title: "Clinical Identity",
@@ -37,12 +53,26 @@ export default function Settings() {
     <motion.div 
       initial={{ opacity: 0, y: 20 }} 
       animate={{ opacity: 1, y: 0 }} 
-      className="max-w-5xl mx-auto space-y-12 pb-32"
+      className="max-w-5xl mx-auto space-y-12 pb-32 relative"
     >
       <header className="space-y-3">
         <h1 className="text-4xl font-black text-slate-800 tracking-tighter uppercase italic">Configuration</h1>
         <p className="text-slate-500 font-medium text-lg">Manage your clinical identity and system parameters.</p>
       </header>
+
+      <AnimatePresence>
+        {toast && (
+          <motion.div 
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            className="fixed top-10 left-1/2 -translate-x-1/2 z-50 bg-emerald-500 text-white px-8 py-4 rounded-[2rem] flex items-center gap-3 shadow-2xl shadow-emerald-500/20 font-black uppercase tracking-widest text-[10px]"
+          >
+            <CheckCircle2 size={20} />
+            Configuration Saved Successfully
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
         
@@ -64,7 +94,7 @@ export default function Settings() {
 
         {/* Right Side: Active Settings Panel */}
         <div className="md:col-span-8 space-y-8">
-          <div className="nm-luxury rounded-[3.5rem] p-10 bg-white/60 glass border border-white relative overflow-hidden">
+          <form onSubmit={handleSave} className="nm-luxury rounded-[3.5rem] p-10 bg-white/60 glass border border-white relative overflow-hidden">
             <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none">
                <Settings2 size={150} className="text-purple-600" />
             </div>
@@ -77,13 +107,16 @@ export default function Settings() {
             <div className="space-y-8 relative z-10">
               {/* Profile Card */}
               <div className="flex items-center gap-8 p-8 rounded-[2.5rem] bg-slate-50/50 border border-slate-100">
-                <div className="w-24 h-24 rounded-[2rem] bg-zinc-900 border-4 border-white shadow-2xl overflow-hidden">
+                <div className="w-24 h-24 rounded-[2rem] bg-zinc-900 border-4 border-white shadow-2xl overflow-hidden relative group">
                   <img src="https://i.pravatar.cc/150?u=sarah" alt="Profile" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+                     <span className="text-white text-[8px] font-black uppercase tracking-widest text-center">Change</span>
+                  </div>
                 </div>
                 <div>
                   <h3 className="text-xl font-black text-slate-800 tracking-tight">Dr. Sarah Connor</h3>
                   <p className="text-xs text-slate-500 font-bold mb-4">Lead Consultant • Cardiology</p>
-                  <button className="nm-button-luxury px-6 py-2.5 rounded-xl text-[10px] font-black text-purple-600 uppercase tracking-widest">Update Photo</button>
+                  <button type="button" className="nm-button-luxury px-6 py-2.5 rounded-xl text-[10px] font-black text-purple-600 uppercase tracking-widest hover:bg-purple-50">Update Photo</button>
                 </div>
               </div>
 
@@ -100,10 +133,13 @@ export default function Settings() {
               </div>
 
               <div className="pt-6 border-t border-slate-100 flex justify-end">
-                <button className="bg-zinc-900 text-white px-10 py-5 rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] hover:bg-purple-600 transition-all shadow-xl shadow-zinc-900/10 active:scale-95">Save Configuration</button>
+                <button disabled={saving} type="submit" className="bg-zinc-900 text-white px-10 py-5 rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] hover:bg-purple-600 transition-all shadow-xl shadow-zinc-900/10 active:scale-95 flex items-center gap-3">
+                  {saving ? <Loader2 size={16} className="animate-spin" /> : null}
+                  {saving ? 'Saving...' : 'Save Configuration'}
+                </button>
               </div>
             </div>
-          </div>
+          </form>
 
           <div className="nm-luxury rounded-[3.5rem] p-10 bg-purple-600 text-white relative overflow-hidden flex items-center justify-between group cursor-pointer">
              <div className="absolute inset-0 bg-gradient-to-r from-purple-700 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />

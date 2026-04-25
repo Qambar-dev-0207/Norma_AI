@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import BulkUpload from './pages/BulkUpload';
 import Patients from './pages/Patients';
+import Doctors from './pages/Doctors';
 import Appointments from './pages/Appointments';
 import LandingPage from './pages/LandingPage';
 import Inbox from './pages/Inbox';
@@ -22,6 +23,7 @@ function App() {
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/appointments" element={<Appointments />} />
           <Route path="/patients" element={<Patients />} />
+          <Route path="/doctors" element={<Doctors />} />
           <Route path="/bulk-upload" element={<BulkUpload />} />
           <Route path="/inbox" element={<Inbox />} />
           <Route path="/settings" element={<Settings />} />

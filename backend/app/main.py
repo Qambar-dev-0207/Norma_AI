@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from app.db.mongodb import connect_to_mongo, close_mongo_connection
 from app.config import get_settings
-from app.api import auth, patients, uploads, dashboard, appointments, webhook
+from app.api import auth, patients, uploads, dashboard, appointments, webhook, doctors
 
 settings = get_settings()
 
@@ -19,6 +19,7 @@ app.add_middleware(
 
 app.include_router(auth.router, prefix="/api")
 app.include_router(patients.router, prefix="/api")
+app.include_router(doctors.router, prefix="/api")
 app.include_router(uploads.router, prefix="/api")
 app.include_router(dashboard.router, prefix="/api")
 app.include_router(appointments.router, prefix="/api")
