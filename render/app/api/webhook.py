@@ -1,56 +1,62 @@
-from fastapi import APIRouter, Request, Response, BackgroundTasks
+from fastapi import APIRouter, Form, Response, BackgroundTasks
 from app.services.whatsapp_service import whatsapp_service
 from app.services.ai_service import ai_service
 from app.db.mongodb import get_db
+from datetime import datetime
 import traceback
 
 router = APIRouter()
 
-async def process_and_reply(sender_phone: str, incoming_msg: str):
+async def process_and_audit(phone: str, message: str):
+    """Handles AI logic, replies to patient, and logs the entire exchange."""
+    db = get_db()
     try:
-        print(f"NORMA AI: Processing background task for {sender_phone}")
-        response_text = await ai_service.process_message(sender_phone, incoming_msg)
-        await whatsapp_service.send_custom_message(sender_phone, response_text)
+        # 1. Log Inbound Message
+        print(f"AUDIT [INBOUND]: {phone} -> '{message}'")
+        if db is not None:
+            await db.messages.insert_one({
+                "phone": phone,
+                "direction": "inbound",
+                "text": message,
+                "timestamp": datetime.utcnow()
+            })
+
+        # 2. Process with AI
+        response_text = await ai_service.process_message(phone, message)
+        
+        # 3. Dispatch WhatsApp Reply
+        await whatsapp_service.send_custom_message(phone, response_text)
+
+        # 4. Log Outbound Response
+        print(f"AUDIT [OUTBOUND]: '{response_text}' -> {phone}")
+        if db is not None:
+            await db.messages.insert_one({
+                "phone": phone,
+                "direction": "outbound",
+                "text": response_text,
+                "timestamp": datetime.utcnow()
+            })
+
     except Exception as e:
-        print(f"NORMA AI BACKGROUND ERROR: {e}")
+        print(f"AUDIT CRITICAL ERROR: {e}")
         traceback.print_exc()
 
 @router.post("/webhook")
-async def whatsapp_webhook(request: Request, background_tasks: BackgroundTasks):
+async def whatsapp_webhook(
+    background_tasks: BackgroundTasks,
+    Body: str = Form(...),
+    From: str = Form(...)
+):
+    """Gateway entry point. Responds to Twilio instantly and audits in background."""
     try:
-        form_data = await request.form()
-        incoming_msg = form_data.get('Body', '').strip()
-        sender_phone = form_data.get('From', '').replace('whatsapp:', '')
+        sender_phone = From.replace('whatsapp:', '').strip()
         
-        # Immediate 200 OK to Twilio
-        background_tasks.add_task(process_and_reply, sender_phone, incoming_msg)
+        # Dispatch to background audit stream
+        background_tasks.add_task(process_and_audit, sender_phone, Body)
         
-        twiml = '<?xml version="1.0" encoding="UTF-8"?><Response></Response>'
-        return Response(content=twiml, media_type="text/xml")
+        # Return 200 OK instantly to Twilio
+        return Response(content="OK", media_type="text/plain", status_code=200)
         
     except Exception as e:
-        print(f"NORMA AI GATEWAY CRITICAL ERROR: {e}")
-        return Response(content='<Response></Response>', media_type="text/xml")
-
-@router.get("/test-db")
-async def test_db_connection():
-    """Directly test if Render can see your patients in MongoDB."""
-    try:
-        db = get_db()
-        if db is None:
-            return {"status": "ERROR", "message": "Database object is None"}
-        
-        count = await db.patients.count_documents({})
-        latest = await db.patients.find_one({}, sort=[("created_at", -1)])
-        
-        return {
-            "status": "SUCCESS",
-            "patient_count": count,
-            "latest_patient": latest.get("full_name") if latest else "None"
-        }
-    except Exception as e:
-        return {
-            "status": "CONNECTION_FAILED",
-            "error": str(e),
-            "traceback": traceback.format_exc()
-        }
+        print(f"GATEWAY AUDIT ERROR: {e}")
+        return Response(content="OK", status_code=200)
