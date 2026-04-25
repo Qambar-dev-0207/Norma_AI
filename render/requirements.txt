@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+pydantic
+pydantic-settings
+motor
+python-dotenv
+twilio
+google-generativeai
+python-multipart
+dnspython
+certifi
+email-validator
+bcrypt
+python-jose[cryptography]

@@ -1,0 +1,12 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Norma AI Backend (Python)",
+  "scripts": {
+    "start": "powershell -Command \"$env:PYTHONPATH='backend'; python backend/app/main.py\"",
+    "dev": "powershell -Command \"$env:PYTHONPATH='backend'; python backend/app/main.py\"",
+    "seed": "powershell -Command \"$env:PYTHONPATH='backend'; python backend/seed.py\""
+  },
+  "dependencies": {
+  }
+}

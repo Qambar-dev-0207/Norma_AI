@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+pydantic
+pydantic-settings
+motor
+python-dotenv
+python-multipart
+twilio
+google-generative-ai
+openpyxl
+pandas
+passlib[bcrypt]
+python-jose[cryptography]
+python-multipart
