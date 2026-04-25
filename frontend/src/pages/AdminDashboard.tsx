@@ -114,22 +114,6 @@ export default function AdminDashboard() {
         ))}
       </section>
 
-      {/* Bottom Node Bar - Exact Image Match */}
-      <div className="bg-white p-4 rounded-full border border-zinc-100 flex items-center justify-between px-16 shadow-sm">
-         <div className="flex items-center gap-5">
-            <div className="w-3 h-3 rounded-full bg-[#7c3aed] shadow-[0_0_10px_rgba(124,58,237,0.5)]" />
-            <span className="text-[12px] font-black text-zinc-400 uppercase tracking-[0.4em]">NODE ALPHA ONLINE</span>
-         </div>
-         
-         <div className="flex items-center gap-20">
-            {['DIAGNOSTICS', 'ENCOUNTERS', 'GLOBAL REGISTRY'].map(item => (
-              <button key={item} className="text-[12px] font-black text-zinc-400 uppercase tracking-[0.4em] hover:text-[#7c3aed] transition-colors">
-                {item}
-              </button>
-            ))}
-         </div>
-      </div>
-
       {/* Floating Chat Icon - Exact Image Match */}
       <div className="fixed bottom-12 right-12 z-[100]">
          <div className="relative group">
