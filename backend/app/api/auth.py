@@ -17,50 +17,65 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
             detail="Invalid authentication credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    phone_number: str = payload.get("sub")
-    if phone_number is None:
+    username: str = payload.get("sub")
+    if username is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
     
-    # Handle hardcoded admin
-    if phone_number == "norma_admin":
-        return {"phone_number": "norma_admin", "role": "admin", "name": "Norma Admin", "_id": "admin_id"}
-
     db = get_db()
-    user = await db.users.find_one({"phone_number": phone_number})
-    if user is None:
+    # Check login_details for the session user
+    login_info = await db.login_details.find_one({"username": username})
+    if login_info is None:
+        # Fallback for phone_number if needed, but we should stay consistent
+        login_info = await db.login_details.find_one({"phone_number": username})
+        
+    if login_info is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
-    return user
+    
+    return login_info
 
 @router.post("/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     db = get_db()
-    user = await db.users.find_one({"phone_number": form_data.username})
+    # Search by phone_number (standard for patients/doctors) or username
+    user = await db.login_details.find_one({
+        "$or": [
+            {"phone_number": form_data.username},
+            {"username": form_data.username}
+        ]
+    })
+    
     if not user or not verify_password(form_data.password, user.get("password_hash")):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect phone number or password",
+            detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
+    identity = user.get("username") or user.get("phone_number")
     access_token = create_access_token(
-        data={"sub": user["phone_number"], "role": user["role"]}
+        data={"sub": identity, "role": user["role"]}
     )
     return {"access_token": access_token, "token_type": "bearer", "role": user["role"]}
 
 @router.post("/admin-login")
 async def admin_login(form_data: OAuth2PasswordRequestForm = Depends()):
-    # Hardcoded admin credentials as requested
-    if form_data.username == "norma_admin" and form_data.password == "norma2026":
-        access_token = create_access_token(
-            data={"sub": "norma_admin", "role": "admin"}
-        )
-        return {"access_token": access_token, "token_type": "bearer", "role": "admin"}
+    db = get_db()
+    admin = await db.login_details.find_one({
+        "username": form_data.username,
+        "role": "admin"
+    })
     
-    raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Incorrect admin username or password",
-        headers={"WWW-Authenticate": "Bearer"},
+    if not admin or not verify_password(form_data.password, admin.get("password_hash")):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect admin credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    access_token = create_access_token(
+        data={"sub": admin["username"], "role": "admin"}
     )
+    return {"access_token": access_token, "token_type": "bearer", "role": "admin"}
 
 def check_role(allowed_roles: List[str]):
     async def role_checker(current_user: dict = Depends(get_current_user)):
@@ -80,36 +95,51 @@ async def add_staff(
     db=Depends(get_db), 
     current_user=Depends(check_role(["admin", "doctor"]))
 ):
-    existing_user = await db.users.find_one({"phone_number": user_in.phone_number})
-    if existing_user:
+    # Check login_details
+    existing_login = await db.login_details.find_one({
+        "$or": [
+            {"phone_number": user_in.phone_number},
+            {"username": user_in.email}
+        ]
+    })
+    if existing_login:
         raise HTTPException(status_code=400, detail="User already exists")
     
-    user_dict = user_in.model_dump()
-    if user_in.password:
-        user_dict["password_hash"] = get_password_hash(user_in.password)
-        del user_dict["password"]
+    password_hash = get_password_hash(user_in.password) if user_in.password else None
     
-    user_dict["role"] = "receptionist" # Staff maps to receptionist
-    user_dict["created_at"] = user_dict["updated_at"] = datetime.utcnow()
-    
-    result = await db.users.insert_one(user_dict)
+    # Write to login_details for authentication and profile
+    login_entry = {
+        "identifier": user_in.phone_number,
+        "phone_number": user_in.phone_number,
+        "username": user_in.email,
+        "name": user_in.name,
+        "password_hash": password_hash,
+        "role": "receptionist",
+        "created_at": datetime.utcnow(),
+        "updated_at": datetime.utcnow()
+    }
+    result = await db.login_details.insert_one(login_entry)
     return {"message": "Staff created successfully", "id": str(result.inserted_id)}
 
 @router.post("/register")
 async def register(user_in: UserCreate):
     db = get_db()
-    existing_user = await db.users.find_one({"phone_number": user_in.phone_number})
-    if existing_user:
+    existing_login = await db.login_details.find_one({"phone_number": user_in.phone_number})
+    if existing_login:
         raise HTTPException(status_code=400, detail="User already exists")
     
-    user_dict = user_in.dict()
-    if user_in.password:
-        user_dict["password_hash"] = get_password_hash(user_in.password)
-        del user_dict["password"]
+    password_hash = get_password_hash(user_in.password) if user_in.password else None
     
-    user_dict["created_at"] = user_dict["updated_at"] = datetime.utcnow()
+    # Write to login_details
+    login_entry = {
+        "identifier": user_in.phone_number,
+        "phone_number": user_in.phone_number,
+        "name": user_in.name,
+        "password_hash": password_hash,
+        "role": user_in.role,
+        "created_at": datetime.utcnow(),
+        "updated_at": datetime.utcnow()
+    }
+    await db.login_details.insert_one(login_entry)
     
-    result = await db.users.insert_one(user_dict)
-    user_dict["_id"] = result.inserted_id
-    
-    return {"message": "User created successfully", "id": str(result.inserted_id)}
+    return {"message": "User created successfully", "phone_number": user_in.phone_number}
