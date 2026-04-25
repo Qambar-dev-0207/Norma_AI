@@ -54,6 +54,3 @@ class WhatsAppService:
             return None
 
 whatsapp_service = WhatsAppService()
-         return None
-
-whatsapp_service = WhatsAppService()

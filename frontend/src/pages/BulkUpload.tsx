@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { Upload, FileType, CheckCircle, AlertCircle, FileSpreadsheet, Loader2 } from 'lucide-react';
+import { Upload, FileType, CheckCircle, AlertCircle, FileSpreadsheet, Loader2, ArrowRight, ShieldCheck, DatabaseZap } from 'lucide-react';
 
 export default function BulkUpload() {
   const [file, setFile] = useState<File | null>(null);
@@ -35,119 +35,156 @@ export default function BulkUpload() {
       setStatus('success');
     } catch (error: any) {
       console.error(error);
-      setErrorMsg(error.response?.data?.detail || error.message || 'Upload failed');
+      setErrorMsg(error.response?.data?.detail || error.message || 'Data integration failed');
       setStatus('error');
     }
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-10 animate-in fade-in duration-700">
-      <div>
-        <h1 className="text-4xl font-bold text-[#dae2fd] tracking-tighter">Bulk Data Orchestration</h1>
-        <p className="text-[#85948f] mt-1 font-medium">Inject large-scale patient records into the NORMA AI network.</p>
+    <div className="max-w-6xl mx-auto space-y-12 animate-in fade-in duration-1000 pb-20">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+        <div>
+          <h1 className="text-4xl font-black text-zinc-900 tracking-tight uppercase">Data Ingestion</h1>
+          <p className="text-gray-500 mt-2 font-medium text-lg italic">High-fidelity clinical record synchronization and reconciliation.</p>
+        </div>
+        <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-purple-50 border border-purple-100">
+           <ShieldCheck size={16} className="text-purple-600" />
+           <span className="text-[10px] font-black text-purple-600 uppercase tracking-widest">Secure Ingestion Node</span>
+        </div>
       </div>
 
-      <div className="bg-[#131b2e] p-10 rounded-2xl border border-[#3c4a46]/10 shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-[#44ddc1]/5 blur-[100px] -mr-32 -mt-32" />
+      <div className="bg-white p-10 md:p-16 rounded-[3rem] border border-gray-100 shadow-xl shadow-gray-200/40 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-purple-50/50 blur-[100px] -mr-48 -mt-48 -z-10 rounded-full" />
         
-        <h2 className="text-xl font-bold text-[#dae2fd] mb-8 tracking-tight flex items-center gap-3">
-          <FileSpreadsheet className="text-[#44ddc1]" />
-          Record Ingestion
-        </h2>
-        
-        <div className="border-2 border-dashed border-[#3c4a46]/20 rounded-2xl p-16 text-center group hover:border-[#44ddc1]/40 transition-all duration-500 bg-[#0b1326]/50">
-          <div className="mx-auto h-20 w-20 bg-[#171f33] rounded-2xl border border-[#3c4a46]/20 flex items-center justify-center text-[#85948f] group-hover:text-[#44ddc1] group-hover:border-[#44ddc1]/30 transition-all duration-500 mb-6">
-            <Upload size={32} />
-          </div>
-          <h3 className="text-xl font-bold text-[#dae2fd] mb-2 tracking-tight">Upload Patient Manifest</h3>
-          <p className="text-[#85948f] mb-8 max-w-sm mx-auto font-medium">Standardized Excel format (.xlsx, .xls) only. AI will automatically map columns.</p>
-          
-          <input 
-            type="file" 
-            id="file-upload" 
-            className="hidden" 
-            accept=".xlsx, .xls" 
-            onChange={handleFileChange}
-          />
-          <label 
-            htmlFor="file-upload" 
-            className="cursor-pointer bg-[#171f33] border border-[#3c4a46]/30 px-8 py-4 rounded-xl font-bold text-[#dae2fd] hover:bg-[#222a3d] hover:border-[#44ddc1]/40 transition-all inline-flex items-center gap-3"
-          >
-            <FileType size={20} className="text-[#44ddc1]" />
-            Choose Manifest File
-          </label>
-          
-          {file && (
-            <div className="mt-8 flex items-center justify-center gap-4 text-[#44ddc1] bg-[#44ddc1]/5 py-4 px-6 rounded-xl w-fit mx-auto border border-[#44ddc1]/10">
-              <FileType size={22} />
-              <span className="font-bold tracking-tight truncate max-w-xs">{file.name}</span>
-              <span className="text-[10px] font-bold bg-[#44ddc1]/20 px-2 py-0.5 rounded uppercase">{(file.size / 1024).toFixed(1)} KB</span>
+        <div className="max-w-3xl mx-auto">
+          <div className="flex items-center gap-4 mb-10">
+            <div className="w-12 h-12 rounded-2xl bg-zinc-900 flex items-center justify-center text-purple-400">
+              <DatabaseZap size={24} />
             </div>
-          )}
-        </div>
-        
-        <div className="mt-10 flex justify-end">
-          <button
-            onClick={handleUpload}
-            disabled={!file || status === 'uploading'}
-            className={`px-10 py-4 rounded-xl font-bold text-[#00382f] transition-all flex items-center gap-3 shadow-xl ${
-              !file || status === 'uploading' 
-                ? 'bg-[#3c4a46]/20 text-[#85948f] cursor-not-allowed border border-[#3c4a46]/10' 
-                : 'bg-[#44ddc1] hover:shadow-[0_0_30px_rgba(68,221,193,0.4)]'
-            }`}
-          >
-            {status === 'uploading' && <Loader2 className="animate-spin" size={20} />}
-            {status === 'uploading' ? 'Analyzing & Mapping...' : 'Initiate Ingestion'}
-          </button>
+            <h2 className="text-2xl font-black text-zinc-900 tracking-tight uppercase">Upload Dataset</h2>
+          </div>
+          
+          <div className="border-4 border-dashed border-gray-100 rounded-[2.5rem] p-12 md:p-20 text-center group hover:border-purple-200 transition-all duration-700 bg-gray-50/30 hover:bg-white relative overflow-hidden">
+            <div className="relative z-10">
+              <div className="mx-auto h-24 w-24 bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 flex items-center justify-center text-gray-300 group-hover:text-purple-600 group-hover:scale-110 transition-all duration-700 mb-8">
+                <Upload size={40} />
+              </div>
+              <h3 className="text-2xl font-black text-zinc-900 mb-3 uppercase tracking-tight">Select Clinical Manifest</h3>
+              <p className="text-gray-400 mb-10 max-w-sm mx-auto font-bold text-sm uppercase tracking-wider leading-relaxed">System supports standardized .xlsx and .xls formats only.</p>
+              
+              <input 
+                type="file" 
+                id="file-upload" 
+                className="hidden" 
+                accept=".xlsx, .xls" 
+                onChange={handleFileChange}
+              />
+              <label 
+                htmlFor="file-upload" 
+                className="cursor-pointer bg-zinc-900 text-white px-10 py-5 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.3em] hover:bg-purple-600 transition-all inline-flex items-center gap-4 shadow-2xl shadow-zinc-900/20 active:scale-95"
+              >
+                <FileType size={20} className="text-purple-400" />
+                Browse Local Storage
+              </label>
+              
+              {file && (
+                <div className="mt-12 flex items-center justify-center gap-5 text-zinc-900 bg-white py-5 px-8 rounded-2xl w-fit mx-auto border border-gray-100 shadow-xl shadow-gray-200/30 animate-in zoom-in-95">
+                  <div className="p-2 bg-purple-50 rounded-xl text-purple-600">
+                    <FileType size={24} />
+                  </div>
+                  <div className="text-left">
+                    <span className="font-black text-sm tracking-tight block truncate max-w-[200px]">{file.name}</span>
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-0.5">{(file.size / 1024).toFixed(1)} KB • Verified File</span>
+                  </div>
+                  <button onClick={() => setFile(null)} className="ml-4 text-gray-300 hover:text-red-500 transition-colors">
+                    <X size={20} />
+                  </button>
+                </div>
+              )}
+            </div>
+            {/* Decorative background grid */}
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none group-hover:opacity-[0.05] transition-opacity" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 0)', backgroundSize: '24px 24px' }} />
+          </div>
+          
+          <div className="mt-12 flex flex-col items-center">
+            <button
+              onClick={handleUpload}
+              disabled={!file || status === 'uploading'}
+              className={`w-full group relative py-6 rounded-[2rem] font-black text-sm uppercase tracking-[0.4em] transition-all flex items-center justify-center gap-4 shadow-2xl ${
+                !file || status === 'uploading' 
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200' 
+                  : 'bg-zinc-900 text-white hover:bg-purple-600 shadow-zinc-900/10'
+              }`}
+            >
+              {status === 'uploading' ? (
+                <>
+                  <Loader2 className="animate-spin" size={20} />
+                  Analyzing Neural Patterns...
+                </>
+              ) : (
+                <>
+                  Authorize Ingestion
+                  <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform duration-500" />
+                </>
+              )}
+            </button>
+            <p className="mt-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">End-to-end encrypted session active</p>
+          </div>
         </div>
       </div>
 
       {status === 'success' && summary && (
-        <div className="bg-[#131b2e] p-10 rounded-2xl border border-[#44ddc1]/20 shadow-2xl animate-in slide-in-from-bottom-5 duration-700">
-          <div className="flex items-center gap-4 text-[#44ddc1] mb-10">
-            <div className="bg-[#44ddc1]/10 p-3 rounded-full border border-[#44ddc1]/20 shadow-[0_0_20px_rgba(68,221,193,0.2)]">
-              <CheckCircle size={28} />
-            </div>
-            <h2 className="text-2xl font-bold text-[#dae2fd] tracking-tighter">Manifest Ingested Successfully</h2>
+        <div className="bg-white p-12 rounded-[3rem] border-2 border-purple-100 shadow-2xl shadow-purple-500/5 animate-in slide-in-from-bottom-10 duration-1000 relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-10 opacity-5">
+             <CheckCircle size={200} className="text-purple-600" />
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-10">
+          <div className="flex items-center gap-6 text-zinc-900 mb-12 relative z-10">
+            <div className="bg-purple-600 p-5 rounded-3xl text-white shadow-xl shadow-purple-500/30">
+              <CheckCircle size={32} />
+            </div>
+            <div>
+              <h2 className="text-3xl font-black tracking-tighter uppercase leading-none">Ingestion Complete</h2>
+              <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-2">Data reconciliation cycle successful</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-8 mb-12 relative z-10">
             {[
-              { label: 'Total Analyzed', value: summary.total, color: '#dae2fd' },
-              { label: 'New Records', value: summary.inserted, color: '#44ddc1' },
-              { label: 'Reconciled', value: summary.skipped, color: '#9ed1c3' },
-              { label: 'Anomalies', value: summary.errors.length, color: '#ffb4a1' },
+              { label: 'Identified Assets', value: summary.total, color: 'text-zinc-900' },
+              { label: 'New Records', value: summary.inserted, color: 'text-purple-600' },
+              { label: 'Reconciled', value: summary.skipped, color: 'text-gray-400' },
+              { label: 'Anomalies', value: summary.errors.length, color: 'text-red-500' },
             ].map((stat, i) => (
-              <div key={i} className="bg-[#0b1326] p-6 rounded-2xl border border-[#3c4a46]/10 relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#3c4a46]/20 to-transparent" />
-                <p className="text-[10px] font-bold text-[#85948f] uppercase tracking-[0.2em] mb-2">{stat.label}</p>
-                <p className="text-3xl font-bold tracking-tight" style={{ color: stat.color }}>{stat.value}</p>
+              <div key={i} className="bg-gray-50/50 p-8 rounded-3xl border border-gray-100 flex flex-col">
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">{stat.label}</p>
+                <p className={`text-4xl font-black tracking-tighter ${stat.color}`}>{stat.value}</p>
               </div>
             ))}
           </div>
 
           {summary.errors.length > 0 && (
-            <div className="space-y-6">
-              <h3 className="font-bold text-[#dae2fd] flex items-center gap-2">
-                <AlertCircle size={18} className="text-[#ffb4a1]" />
-                Anomaly Detection Report
-              </h3>
-              <div className="bg-[#0b1326] rounded-2xl overflow-hidden border border-[#3c4a46]/10">
+            <div className="space-y-8 relative z-10">
+              <div className="flex items-center gap-3">
+                <AlertCircle size={20} className="text-red-500" />
+                <h3 className="font-black text-zinc-900 uppercase tracking-widest text-sm">Anomaly diagnostic report</h3>
+              </div>
+              <div className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-sm">
                 <table className="w-full text-left">
-                  <thead className="bg-[#171f33] border-b border-[#3c4a46]/10">
+                  <thead className="bg-gray-50/50 border-b border-gray-100">
                     <tr>
-                      <th className="px-6 py-4 text-[11px] font-bold text-[#85948f] uppercase tracking-wider">Reference Row</th>
-                      <th className="px-6 py-4 text-[11px] font-bold text-[#85948f] uppercase tracking-wider">AI Diagnostic</th>
+                      <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Reference Row</th>
+                      <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">AI Diagnostic Output</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#3c4a46]/5">
+                  <tbody className="divide-y divide-gray-50">
                     {summary.errors.map((err: any, idx: number) => (
-                      <tr key={idx} className="hover:bg-[#171f33]/30 transition-colors">
-                        <td className="px-6 py-4">
-                          <span className="text-sm font-bold text-[#dae2fd]">Row {err.row}</span>
+                      <tr key={idx} className="hover:bg-gray-50/30 transition-colors group">
+                        <td className="px-8 py-6">
+                          <span className="text-sm font-black text-zinc-900 group-hover:text-purple-600 transition-colors">Row Vector {err.row}</span>
                         </td>
-                        <td className="px-6 py-4">
-                          <span className="text-sm text-[#ffb4a1] font-medium">{err.reason}</span>
+                        <td className="px-8 py-6">
+                          <span className="text-sm text-red-500 font-bold tracking-tight">{err.reason}</span>
                         </td>
                       </tr>
                     ))}
@@ -160,18 +197,18 @@ export default function BulkUpload() {
       )}
 
       {status === 'error' && (
-        <div className="bg-[#131b2e] p-8 rounded-2xl border border-red-500/20 flex items-start gap-6 shadow-2xl animate-in bounce-in duration-500">
-          <div className="bg-red-500/10 p-3 rounded-full border border-red-500/20">
-            <AlertCircle className="text-red-500" size={28} />
+        <div className="bg-white p-10 rounded-[3rem] border-2 border-red-100 flex items-start gap-8 shadow-2xl shadow-red-500/5 animate-in bounce-in duration-700">
+          <div className="bg-red-50 p-5 rounded-3xl border border-red-100 text-red-500 shadow-inner">
+            <AlertCircle size={32} />
           </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-bold text-red-400 mb-1 tracking-tight">Ingestion Failure</h3>
-            <p className="text-[#85948f] font-medium">{errorMsg}</p>
+          <div className="flex-1 pt-2">
+            <h3 className="text-2xl font-black text-zinc-900 mb-2 uppercase tracking-tighter">Integration Failure</h3>
+            <p className="text-gray-500 font-bold text-lg leading-relaxed italic">{errorMsg}</p>
             <button 
               onClick={() => setStatus('idle')}
-              className="mt-4 text-[11px] font-bold text-[#44ddc1] uppercase tracking-widest hover:underline"
+              className="mt-8 bg-zinc-900 text-white px-10 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-red-500 transition-all shadow-xl shadow-red-500/10"
             >
-              Try Again
+              Initialize Retry Protocol
             </button>
           </div>
         </div>

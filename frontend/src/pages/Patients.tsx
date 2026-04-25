@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { 
   Users, Search, Plus, MoreVertical, Edit2, Trash2, Loader2, X,
-  Phone, User, MapPin, FileText, Mail, Calendar, Languages, ShieldCheck, AlertCircle, HeartPulse
+  Phone, User, MapPin, FileText, Mail, Calendar, Languages, ShieldCheck, AlertCircle, HeartPulse,
+  Fingerprint, ArrowUpRight, Filter
 } from 'lucide-react';
 
 export default function Patients() {
@@ -72,12 +73,12 @@ export default function Patients() {
       fetchPatients();
     } catch (err: any) { 
       console.error('Operation failed', err);
-      setError(err.response?.data?.detail || 'Clinical ingestion failed. Check terminal connection.');
+      setError(err.response?.data?.detail || 'Clinical registration failed. Verify network connectivity.');
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Archive this patient record?')) return;
+    if (!window.confirm('Archive this clinical record? This action will restrict patient lifecycle visibility.')) return;
     const token = localStorage.getItem('token');
     try {
       await axios.delete(`http://localhost:5000/api/patients/${id}`, {
@@ -95,261 +96,260 @@ export default function Patients() {
 
   if (loading) {
     return (
-      <div className="h-full flex flex-col items-center justify-center space-y-4">
-        <Loader2 className="animate-spin text-[#44ddc1]" size={40} />
-        <p className="text-[#85948f] font-bold uppercase tracking-widest text-xs">Accessing Clinical Registry...</p>
+      <div className="h-full flex flex-col items-center justify-center space-y-6">
+        <div className="relative">
+           <div className="absolute inset-0 blur-2xl bg-purple-500/20 rounded-full animate-pulse" />
+           <Loader2 className="animate-spin text-purple-600 relative z-10" size={48} />
+        </div>
+        <p className="text-gray-400 font-black uppercase tracking-[0.3em] text-[10px] animate-pulse">Accessing Patient Mesh...</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-700">
-      <div className="flex justify-between items-end">
+    <div className="space-y-12 animate-in fade-in duration-1000 pb-20">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
         <div>
-          <h1 className="text-4xl font-bold text-[#dae2fd] tracking-tighter">Clinical Registry</h1>
-          <p className="text-[#85948f] mt-1 font-medium">Global patient identification and lifecycle management.</p>
+          <h1 className="text-4xl font-black text-zinc-900 tracking-tight uppercase">Patient Registry</h1>
+          <p className="text-gray-500 mt-2 font-medium text-lg italic">Comprehensive identity and health record lifecycle management.</p>
         </div>
         <button 
           onClick={() => { setEditingPatient(null); setFormData(initialForm); setError(''); setShowModal(true); }}
-          className="bg-[#44ddc1] text-[#00382f] px-6 py-3 rounded-xl text-sm font-bold shadow-[0_0_20px_rgba(68,221,193,0.3)] hover:shadow-[0_0_30px_rgba(68,221,193,0.5)] transition-all flex items-center gap-2"
+          className="group bg-[#09090b] text-white px-10 py-5 rounded-[2rem] text-sm font-black shadow-2xl shadow-zinc-900/20 hover:bg-purple-600 transition-all flex items-center gap-3"
         >
-          <Plus size={18} /> Register New Patient
+          <Plus size={20} className="text-purple-400 group-hover:rotate-90 transition-transform duration-500" /> 
+          Admission Intake
         </button>
       </div>
 
-      <div className="bg-[#131b2e] p-4 rounded-2xl border border-[#3c4a46]/10 flex items-center gap-4">
-        <Search size={20} className="text-[#85948f] ml-2" />
-        <input 
-          type="text" 
-          placeholder="Search by name, phone, or UUID..." 
-          className="bg-transparent border-none outline-none text-[#dae2fd] w-full py-2 placeholder-[#85948f]"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex-1 bg-white p-5 rounded-[1.8rem] border border-gray-100 shadow-sm flex items-center gap-5 focus-within:ring-4 focus-within:ring-purple-500/5 focus-within:border-purple-200 transition-all">
+          <Search size={22} className="text-gray-300 ml-3" />
+          <input 
+            type="text" 
+            placeholder="Search by legal name, contact axis, or global UUID..." 
+            className="bg-transparent border-none outline-none text-zinc-900 w-full py-2 font-bold text-sm placeholder-gray-300"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <button className="bg-white px-8 py-5 rounded-[1.8rem] border border-gray-100 text-gray-400 font-black text-[10px] uppercase tracking-[0.3em] flex items-center gap-3 hover:bg-gray-50 transition-all shadow-sm">
+          <Filter size={18} />
+          Refine Search
+        </button>
       </div>
 
-      <div className="bg-[#131b2e] rounded-2xl border border-[#3c4a46]/10 overflow-hidden">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="border-b border-[#3c4a46]/10 bg-[#171f33]/50">
-              <th className="px-8 py-5 text-[11px] font-bold text-[#85948f] uppercase tracking-wider">Patient Identifer</th>
-              <th className="px-8 py-5 text-[11px] font-bold text-[#85948f] uppercase tracking-wider">Contact</th>
-              <th className="px-8 py-5 text-[11px] font-bold text-[#85948f] uppercase tracking-wider">Clinical Status</th>
-              <th className="px-8 py-5 text-[11px] font-bold text-[#85948f] uppercase tracking-wider">Insurance</th>
-              <th className="px-8 py-5"></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[#3c4a46]/5">
-            {filteredPatients.map((patient) => (
-              <tr key={patient._id} className="hover:bg-[#171f33]/40 transition-colors group">
-                <td className="px-8 py-5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#0b1326] border border-[#3c4a46]/20 flex items-center justify-center text-xs font-bold text-[#44ddc1]">
-                      {patient.full_name?.split(' ').map((n: any) => n[0]).join('')}
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-[#dae2fd]">{patient.full_name}</p>
-                      <p className="text-[10px] font-mono text-[#85948f] uppercase">UUID: {patient.patient_uuid?.slice(0,8)}...</p>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-8 py-5">
-                  <p className="text-sm font-bold text-[#dae2fd]">{patient.phone_number}</p>
-                  <p className="text-[10px] text-[#85948f]">{patient.email || 'No email'}</p>
-                </td>
-                <td className="px-8 py-5">
-                  <div className="flex flex-wrap gap-2">
-                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded border ${patient.is_active ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-red-500/10 border-red-500/20 text-red-400'} uppercase`}>
-                      {patient.is_active ? 'Active' : 'Inactive'}
-                    </span>
-                    {patient.medical_alerts?.length > 0 && (
-                      <span className="text-[9px] font-bold px-2 py-0.5 bg-red-500/10 border border-red-500/20 text-red-400 uppercase flex items-center gap-1">
-                        <AlertCircle size={10} /> {patient.medical_alerts.length} Alerts
-                      </span>
-                    )}
-                  </div>
-                </td>
-                <td className="px-8 py-5">
-                  <p className="text-sm font-medium text-[#dae2fd]">{patient.insurance_provider || 'Self-Pay'}</p>
-                  <p className="text-[10px] text-[#85948f]">{patient.insurance_id || '-'}</p>
-                </td>
-                <td className="px-8 py-5 text-right relative">
-                  <button 
-                    onClick={() => setActiveMenu(activeMenu === patient._id ? null : patient._id)}
-                    className="text-[#85948f] hover:text-[#dae2fd] p-1 transition-colors"
-                  >
-                    <MoreVertical size={20} />
-                  </button>
-                  
-                  {activeMenu === patient._id && (
-                    <div className="absolute right-12 top-1/2 -translate-y-1/2 bg-[#171f33] border border-[#3c4a46]/20 rounded-xl shadow-2xl z-50 py-2 w-48 animate-in zoom-in-95 duration-200">
-                      <button 
-                        onClick={() => {
-                          setEditingPatient(patient);
-                          setFormData({
-                            ...patient,
-                            medical_alerts: patient.medical_alerts?.join(', ') || '',
-                            date_of_birth: patient.date_of_birth ? new Date(patient.date_of_birth).toISOString().split('T')[0] : ''
-                          });
-                          setShowModal(true);
-                          setActiveMenu(null);
-                        }}
-                        className="w-full flex items-center gap-3 px-4 py-2 text-sm font-bold text-[#dae2fd] hover:bg-[#44ddc1]/10 hover:text-[#44ddc1] transition-colors"
-                      >
-                        <Edit2 size={16} /> Clinical Update
-                      </button>
-                      <button 
-                        onClick={() => { handleDelete(patient._id); setActiveMenu(null); }}
-                        className="w-full flex items-center gap-3 px-4 py-2 text-sm font-bold text-red-400 hover:bg-red-500/10 transition-colors"
-                      >
-                        <Trash2 size={16} /> Archive Record
-                      </button>
-                    </div>
-                  )}
-                </td>
+      <div className="bg-white rounded-[3rem] border border-gray-100 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="bg-gray-50/50">
+                <th className="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Identity Asset</th>
+                <th className="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Secure Contact</th>
+                <th className="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Protocol Status</th>
+                <th className="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Financial Matrix</th>
+                <th className="px-10 py-8"></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {filteredPatients.map((patient) => (
+                <tr key={patient._id} className="hover:bg-gray-50/80 transition-all group">
+                  <td className="px-10 py-8">
+                    <div className="flex items-center gap-5">
+                      <div className="w-14 h-14 rounded-2xl bg-zinc-900 border border-gray-800 flex items-center justify-center text-xs font-black text-purple-400 shadow-xl group-hover:scale-105 transition-transform duration-500">
+                        {patient.full_name?.split(' ').map((n: any) => n[0]).join('')}
+                      </div>
+                      <div>
+                        <p className="text-base font-black text-zinc-900 group-hover:text-purple-600 transition-colors tracking-tight">{patient.full_name}</p>
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1 opacity-70 flex items-center gap-2">
+                           <Fingerprint size={12} className="text-purple-600/50" />
+                           {patient.patient_uuid?.slice(0,12)}...
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-10 py-8">
+                    <p className="text-sm font-black text-zinc-900">{patient.phone_number}</p>
+                    <p className="text-[10px] text-gray-400 font-bold tracking-tight mt-1 lowercase italic">{patient.email || 'no-email-authorized'}</p>
+                  </td>
+                  <td className="px-10 py-8">
+                    <div className="flex flex-wrap gap-2.5">
+                      <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border ${patient.is_active ? 'bg-purple-50 border-purple-100 text-purple-600' : 'bg-gray-100 border-gray-200 text-gray-500'}`}>
+                        <div className={`w-1.5 h-1.5 rounded-full ${patient.is_active ? 'bg-purple-600 animate-pulse' : 'bg-gray-400'}`} />
+                        <span className="text-[10px] font-black uppercase tracking-widest">{patient.is_active ? 'Operational' : 'Restricted'}</span>
+                      </div>
+                      {patient.medical_alerts?.length > 0 && (
+                        <span className="text-[10px] font-black px-3 py-1.5 bg-red-50 border border-red-100 text-red-500 uppercase flex items-center gap-1.5 shadow-sm">
+                          <AlertCircle size={12} /> {patient.medical_alerts.length} Critical Alerts
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-10 py-8">
+                    <p className="text-sm font-black text-zinc-900">{patient.insurance_provider || 'Direct-Pay Protocol'}</p>
+                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">ID: {patient.insurance_id || 'unassigned'}</p>
+                  </td>
+                  <td className="px-10 py-8 text-right relative">
+                    <button 
+                      onClick={() => setActiveMenu(activeMenu === patient._id ? null : patient._id)}
+                      className="text-gray-300 hover:text-purple-600 p-3 rounded-2xl hover:bg-white transition-all shadow-none hover:shadow-lg"
+                    >
+                      <MoreVertical size={24} />
+                    </button>
+                    
+                    {activeMenu === patient._id && (
+                      <div className="absolute right-16 top-1/2 -translate-y-1/2 bg-white border border-gray-100 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] z-50 py-3 w-56 animate-in zoom-in-95 duration-300">
+                        <button 
+                          onClick={() => {
+                            setEditingPatient(patient);
+                            setFormData({
+                              ...patient,
+                              medical_alerts: patient.medical_alerts?.join(', ') || '',
+                              date_of_birth: patient.date_of_birth ? new Date(patient.date_of_birth).toISOString().split('T')[0] : ''
+                            });
+                            setShowModal(true);
+                            setActiveMenu(null);
+                          }}
+                          className="w-full flex items-center justify-between px-6 py-3 text-sm font-black text-zinc-900 hover:bg-purple-50 hover:text-purple-600 transition-all group/btn"
+                        >
+                          Modify Protocol <ArrowUpRight size={16} className="text-gray-300 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                        </button>
+                        <div className="h-[1px] bg-gray-50 my-1 mx-4" />
+                        <button 
+                          onClick={() => { handleDelete(patient._id); setActiveMenu(null); }}
+                          className="w-full flex items-center justify-between px-6 py-3 text-sm font-black text-red-500 hover:bg-red-50 transition-all"
+                        >
+                          Archive Asset <Trash2 size={16} />
+                        </button>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+              {filteredPatients.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="px-10 py-32 text-center">
+                    <div className="flex flex-col items-center gap-4 opacity-30 grayscale">
+                       <Users size={64} className="text-gray-400" />
+                       <p className="text-lg font-bold text-gray-500 italic">Registry synchronization yielded zero results.</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 bg-[#060e20]/90 backdrop-blur-xl flex items-center justify-center z-[100] p-6">
-          <div className="bg-[#131b2e] border border-[#3c4a46]/20 rounded-[2rem] w-full max-w-4xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-            <div className="p-8 border-b border-[#3c4a46]/10 flex justify-between items-center bg-[#171f33]/50">
+        <div className="fixed inset-0 bg-zinc-900/70 backdrop-blur-3xl flex items-center justify-center z-[100] p-6">
+          <div className="bg-white border border-gray-200 rounded-[3.5rem] w-full max-w-5xl shadow-[0_60px_120px_-20px_rgba(0,0,0,0.4)] overflow-hidden animate-in zoom-in-95 duration-700">
+            <div className="p-12 md:p-16 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
               <div>
-                <h2 className="text-2xl font-bold text-[#dae2fd] tracking-tight">
-                  {editingPatient ? 'Update Clinical Profile' : 'Global Patient Registration'}
+                <h2 className="text-4xl font-black text-zinc-900 tracking-tighter uppercase leading-none">
+                  {editingPatient ? 'Modify Record' : 'Global Admission'}
                 </h2>
-                <p className="text-xs text-[#85948f] font-medium mt-1">Fill all required diagnostic and contact fields.</p>
+                <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.4em] mt-4">Authorized Clinical Ingestion Node 01</p>
               </div>
-              <button onClick={() => setShowModal(false)} className="bg-[#0b1326] p-2 rounded-full text-[#85948f] hover:text-red-400 border border-[#3c4a46]/20">
-                <X size={20} />
+              <button onClick={() => setShowModal(false)} className="bg-white p-5 rounded-[1.8rem] text-gray-300 hover:text-red-500 border border-gray-100 hover:border-red-100 transition-all shadow-sm">
+                <X size={32} />
               </button>
             </div>
 
             {error && (
-              <div className="mx-8 mt-6 bg-red-500/10 border border-red-500/20 p-4 rounded-xl flex items-center gap-3 text-red-400 text-xs font-bold uppercase animate-in shake duration-500">
-                <AlertCircle size={16} />
+              <div className="mx-12 mt-10 bg-red-50 border-2 border-red-100 p-6 rounded-[2rem] flex items-center gap-5 text-red-500 text-xs font-black uppercase tracking-widest animate-in shake duration-500 shadow-xl shadow-red-500/5">
+                <AlertCircle size={24} />
                 {error}
               </div>
             )}
             
-            <form onSubmit={handleSubmit} className="p-10 grid grid-cols-2 gap-x-10 gap-y-6 overflow-y-auto max-h-[70vh]">
+            <form onSubmit={handleSubmit} className="p-12 md:p-16 grid grid-cols-2 gap-x-16 gap-y-10 overflow-y-auto max-h-[65vh] scrollbar-thin">
               {/* Primary Identity */}
-              <div className="col-span-2 flex items-center gap-2 mb-2">
-                <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-[#3c4a46]/30" />
-                <span className="text-[10px] font-bold text-[#44ddc1] uppercase tracking-[0.3em]">Identity & Contact</span>
-                <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-[#3c4a46]/30" />
+              <div className="col-span-2 flex items-center gap-6 mb-2">
+                <span className="text-[11px] font-black text-purple-600 uppercase tracking-[0.4em] whitespace-nowrap">Identity Matrix</span>
+                <div className="h-[2px] w-full bg-gradient-to-r from-purple-100 to-transparent" />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-[#85948f] uppercase tracking-widest ml-1">Full Name *</label>
-                <div className="relative">
-                  <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#85948f]" />
-                  <input type="text" required placeholder="e.g. John Alexander Smith" className="w-full bg-[#0b1326] border border-[#3c4a46]/20 text-[#dae2fd] pl-12 pr-4 py-3 rounded-xl outline-none focus:border-[#44ddc1]/40 transition-all text-sm" value={formData.full_name} onChange={e => setFormData({...formData, full_name: e.target.value})} />
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] ml-2">Full Legal Name *</label>
+                <div className="relative group">
+                  <User size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-purple-600 transition-colors" />
+                  <input type="text" required placeholder="Enter primary identity..." className="w-full bg-gray-50 border-2 border-transparent text-zinc-900 pl-16 pr-8 py-6 rounded-[1.8rem] outline-none focus:bg-white focus:border-purple-200 transition-all text-base font-black shadow-inner" value={formData.full_name} onChange={e => setFormData({...formData, full_name: e.target.value})} />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-[#85948f] uppercase tracking-widest ml-1">International Phone *</label>
-                <div className="relative">
-                  <Phone size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#85948f]" />
-                  <input type="text" required placeholder="e.g. +971 50 123 4567" className="w-full bg-[#0b1326] border border-[#3c4a46]/20 text-[#dae2fd] pl-12 pr-4 py-3 rounded-xl outline-none focus:border-[#44ddc1]/40 transition-all text-sm" value={formData.phone_number} onChange={e => setFormData({...formData, phone_number: e.target.value})} />
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] ml-2">Secure Contact Axis *</label>
+                <div className="relative group">
+                  <Phone size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-purple-600 transition-colors" />
+                  <input type="text" required placeholder="+0 000 000 0000" className="w-full bg-gray-50 border-2 border-transparent text-zinc-900 pl-16 pr-8 py-6 rounded-[1.8rem] outline-none focus:bg-white focus:border-purple-200 transition-all text-base font-black shadow-inner" value={formData.phone_number} onChange={e => setFormData({...formData, phone_number: e.target.value})} />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-[#85948f] uppercase tracking-widest ml-1">Email Address</label>
-                <div className="relative">
-                  <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#85948f]" />
-                  <input type="email" placeholder="patient@example.com" className="w-full bg-[#0b1326] border border-[#3c4a46]/20 text-[#dae2fd] pl-12 pr-4 py-3 rounded-xl outline-none focus:border-[#44ddc1]/40 transition-all text-sm" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] ml-2">Secure Digital Mail</label>
+                <div className="relative group">
+                  <Mail size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-purple-600 transition-colors" />
+                  <input type="email" placeholder="patient@mesh.net" className="w-full bg-gray-50 border-2 border-transparent text-zinc-900 pl-16 pr-8 py-6 rounded-[1.8rem] outline-none focus:bg-white focus:border-purple-200 transition-all text-base font-black shadow-inner" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-[#85948f] uppercase tracking-widest ml-1">DOB</label>
-                  <input type="date" className="w-full bg-[#0b1326] border border-[#3c4a46]/20 text-[#dae2fd] px-4 py-3 rounded-xl outline-none focus:border-[#44ddc1]/40 transition-all text-sm [color-scheme:dark]" value={formData.date_of_birth} onChange={e => setFormData({...formData, date_of_birth: e.target.value})} />
+              <div className="grid grid-cols-2 gap-8">
+                <div className="space-y-4">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] ml-2">Temporal Birth</label>
+                  <input type="date" className="w-full bg-gray-50 border-2 border-transparent text-zinc-900 px-8 py-6 rounded-[1.8rem] outline-none focus:bg-white focus:border-purple-200 transition-all text-sm font-black shadow-inner" value={formData.date_of_birth} onChange={e => setFormData({...formData, date_of_birth: e.target.value})} />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-[#85948f] uppercase tracking-widest ml-1">Gender</label>
-                  <select className="w-full bg-[#0b1326] border border-[#3c4a46]/20 text-[#dae2fd] px-4 py-3 rounded-xl outline-none focus:border-[#44ddc1]/40 transition-all text-sm appearance-none" value={formData.gender} onChange={e => setFormData({...formData, gender: e.target.value})}>
+                <div className="space-y-4">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] ml-2">Identity Spectrum</label>
+                  <select className="w-full bg-gray-50 border-2 border-transparent text-zinc-900 px-8 py-6 rounded-[1.8rem] outline-none focus:bg-white focus:border-purple-200 transition-all text-sm font-black shadow-inner appearance-none cursor-pointer" value={formData.gender} onChange={e => setFormData({...formData, gender: e.target.value})}>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                    <option value="Prefer not to say">N/A</option>
+                    <option value="Other">Other Protocol</option>
                   </select>
                 </div>
               </div>
 
               {/* Emergency & Language */}
-              <div className="col-span-2 flex items-center gap-2 mt-4 mb-2">
-                <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-[#3c4a46]/30" />
-                <span className="text-[10px] font-bold text-[#44ddc1] uppercase tracking-[0.3em]">Care & Emergency</span>
-                <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-[#3c4a46]/30" />
+              <div className="col-span-2 flex items-center gap-6 mt-6 mb-2">
+                <span className="text-[11px] font-black text-purple-600 uppercase tracking-[0.4em] whitespace-nowrap">Social & Linguistic Configuration</span>
+                <div className="h-[2px] w-full bg-gradient-to-r from-purple-100 to-transparent" />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-[#85948f] uppercase tracking-widest ml-1">Emergency Contact Name</label>
-                <input type="text" placeholder="Contact person name" className="w-full bg-[#0b1326] border border-[#3c4a46]/20 text-[#dae2fd] px-4 py-3 rounded-xl outline-none focus:border-[#44ddc1]/40 transition-all text-sm" value={formData.emergency_contact_name} onChange={e => setFormData({...formData, emergency_contact_name: e.target.value})} />
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] ml-2">Care Contact Identifier</label>
+                <input type="text" placeholder="Authorized representative" className="w-full bg-gray-50 border-2 border-transparent text-zinc-900 px-8 py-6 rounded-[1.8rem] outline-none focus:bg-white focus:border-purple-200 transition-all text-sm font-black shadow-inner" value={formData.emergency_contact_name} onChange={e => setFormData({...formData, emergency_contact_name: e.target.value})} />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-[#85948f] uppercase tracking-widest ml-1">Emergency Phone</label>
-                <input type="text" placeholder="+1..." className="w-full bg-[#0b1326] border border-[#3c4a46]/20 text-[#dae2fd] px-4 py-3 rounded-xl outline-none focus:border-[#44ddc1]/40 transition-all text-sm" value={formData.emergency_contact_phone} onChange={e => setFormData({...formData, emergency_contact_phone: e.target.value})} />
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] ml-2">Care Contact Axis</label>
+                <input type="text" placeholder="+0..." className="w-full bg-gray-50 border-2 border-transparent text-zinc-900 px-8 py-6 rounded-[1.8rem] outline-none focus:bg-white focus:border-purple-200 transition-all text-sm font-black shadow-inner" value={formData.emergency_contact_phone} onChange={e => setFormData({...formData, emergency_contact_phone: e.target.value})} />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-[#85948f] uppercase tracking-widest ml-1">Preferred Language</label>
-                <div className="relative">
-                  <Languages size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#85948f]" />
-                  <select className="w-full bg-[#0b1326] border border-[#3c4a46]/20 text-[#dae2fd] pl-12 pr-4 py-3 rounded-xl outline-none focus:border-[#44ddc1]/40 transition-all text-sm appearance-none" value={formData.preferred_language} onChange={e => setFormData({...formData, preferred_language: e.target.value})}>
-                    <option value="ar">Arabic (ar)</option>
-                    <option value="en">English (en)</option>
-                  </select>
+              {/* Medical & Insurance */}
+              <div className="col-span-2 flex items-center gap-6 mt-6 mb-2">
+                <span className="text-[11px] font-black text-purple-600 uppercase tracking-[0.4em] whitespace-nowrap">Diagnostic & Insurance Matrix</span>
+                <div className="h-[2px] w-full bg-gradient-to-r from-purple-100 to-transparent" />
+              </div>
+
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] ml-2">Insurance Provider Node</label>
+                <div className="relative group">
+                  <ShieldCheck size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-purple-600 transition-colors" />
+                  <input type="text" placeholder="Authorized Provider..." className="w-full bg-gray-50 border-2 border-transparent text-zinc-900 pl-16 pr-8 py-6 rounded-[1.8rem] outline-none focus:bg-white focus:border-purple-200 transition-all text-sm font-black shadow-inner" value={formData.insurance_provider} onChange={e => setFormData({...formData, insurance_provider: e.target.value})} />
                 </div>
               </div>
 
-              {/* Insurance & Alerts */}
-              <div className="col-span-2 flex items-center gap-2 mt-4 mb-2">
-                <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-[#3c4a46]/30" />
-                <span className="text-[10px] font-bold text-[#44ddc1] uppercase tracking-[0.3em]">Medical & Insurance</span>
-                <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-[#3c4a46]/30" />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-[#85948f] uppercase tracking-widest ml-1">Insurance Provider</label>
-                <div className="relative">
-                  <ShieldCheck size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#85948f]" />
-                  <input type="text" placeholder="e.g. AXA, Cigna, Bupa" className="w-full bg-[#0b1326] border border-[#3c4a46]/20 text-[#dae2fd] pl-12 pr-4 py-3 rounded-xl outline-none focus:border-[#44ddc1]/40 transition-all text-sm" value={formData.insurance_provider} onChange={e => setFormData({...formData, insurance_provider: e.target.value})} />
+              <div className="col-span-2 space-y-4">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] ml-2">Critical Health Alerts (comma separated)</label>
+                <div className="relative group">
+                  <HeartPulse size={20} className="absolute left-6 top-6 text-red-400 group-focus-within:animate-pulse" />
+                  <textarea rows={2} placeholder="Allergies, chronic vectors, etc..." className="w-full bg-red-50/20 border-2 border-red-50 text-zinc-900 pl-16 pr-8 py-6 rounded-[2rem] outline-none focus:bg-white focus:border-red-200 transition-all text-sm font-black shadow-inner resize-none" value={formData.medical_alerts} onChange={e => setFormData({...formData, medical_alerts: e.target.value})} />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-[#85948f] uppercase tracking-widest ml-1">Insurance ID</label>
-                <input type="text" placeholder="Policy or member number" className="w-full bg-[#0b1326] border border-[#3c4a46]/20 text-[#dae2fd] px-4 py-3 rounded-xl outline-none focus:border-[#44ddc1]/40 transition-all text-sm" value={formData.insurance_id} onChange={e => setFormData({...formData, insurance_id: e.target.value})} />
-              </div>
-
-              <div className="col-span-2 space-y-2">
-                <label className="text-[10px] font-bold text-[#85948f] uppercase tracking-widest ml-1">Medical Alerts (Allergies, Conditions - comma separated)</label>
-                <div className="relative">
-                  <HeartPulse size={16} className="absolute left-4 top-4 text-red-400" />
-                  <textarea rows={2} placeholder="e.g. Penicillin allergy, Type 2 Diabetes, Hypertension..." className="w-full bg-[#0b1326] border border-[#3c4a46]/20 text-[#dae2fd] pl-12 pr-4 py-3 rounded-xl outline-none focus:border-[#44ddc1]/40 transition-all text-sm resize-none" value={formData.medical_alerts} onChange={e => setFormData({...formData, medical_alerts: e.target.value})} />
-                </div>
-              </div>
-
-              <div className="col-span-2 space-y-2">
-                <label className="text-[10px] font-bold text-[#85948f] uppercase tracking-widest ml-1">Clinical Notes</label>
-                <div className="relative">
-                  <FileText size={16} className="absolute left-4 top-4 text-[#85948f]" />
-                  <textarea rows={3} placeholder="Additional clinical observations, history, or social context..." className="w-full bg-[#0b1326] border border-[#3c4a46]/20 text-[#dae2fd] pl-12 pr-4 py-3 rounded-xl outline-none focus:border-[#44ddc1]/40 transition-all text-sm resize-none" value={formData.notes} onChange={e => setFormData({...formData, notes: e.target.value})} />
-                </div>
-              </div>
-
-              <div className="col-span-2 pt-6 flex gap-6">
-                <button type="button" onClick={() => setShowModal(false)} className="flex-1 bg-[#171f33] text-[#dae2fd] py-5 rounded-2xl font-bold border border-[#3c4a46]/20 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 transition-all">Discard Changes</button>
-                <button type="submit" className="flex-1 bg-[#44ddc1] text-[#00382f] py-5 rounded-2xl font-bold shadow-[0_0_30px_rgba(68,221,193,0.3)] hover:shadow-[0_0_40px_rgba(68,221,193,0.5)] transition-all">Commit Clinical Record</button>
+              <div className="col-span-2 pt-10 flex gap-10">
+                <button type="button" onClick={() => setShowModal(false)} className="flex-1 bg-white text-gray-400 py-7 rounded-[2.2rem] font-black uppercase tracking-[0.3em] text-xs border-2 border-gray-100 hover:bg-gray-50 hover:text-zinc-900 transition-all shadow-sm">Discard Protocol</button>
+                <button type="submit" className="flex-1 bg-zinc-900 text-white py-7 rounded-[2.2rem] font-black uppercase tracking-[0.3em] text-xs shadow-2xl shadow-zinc-900/20 hover:bg-purple-600 hover:-translate-y-1 transition-all active:scale-95">Commit Asset To Registry</button>
               </div>
             </form>
           </div>

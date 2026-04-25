@@ -10,7 +10,10 @@ import {
   X,
   Clock,
   User,
-  Stethoscope
+  Stethoscope,
+  ChevronRight,
+  Sparkles,
+  Zap
 } from 'lucide-react';
 
 export default function Appointments() {
@@ -38,7 +41,7 @@ export default function Appointments() {
       setAppointments(aptsRes.data);
       setPatients(patientsRes.data);
     } catch (err) {
-      console.error('Failed to fetch data', err);
+      console.error('Data synchronization failed', err);
     } finally {
       setLoading(false);
     }
@@ -65,12 +68,12 @@ export default function Appointments() {
       setEditingApt(null);
       fetchData();
     } catch (err) {
-      console.error('Operation failed', err);
+      console.error('Temporal alignment failed', err);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Delete this appointment?')) return;
+    if (!window.confirm('Delete this clinical encounter from the schedule?')) return;
     const token = localStorage.getItem('token');
     try {
       await axios.delete(`http://localhost:5000/api/appointments/${id}`, {
@@ -78,25 +81,28 @@ export default function Appointments() {
       });
       fetchData();
     } catch (err) {
-      console.error('Delete failed', err);
+      console.error('Encounter removal failed', err);
     }
   };
 
   if (loading) {
     return (
-      <div className="h-full flex flex-col items-center justify-center space-y-4">
-        <Loader2 className="animate-spin text-[#44ddc1]" size={40} />
-        <p className="text-[#85948f] font-bold uppercase tracking-widest text-xs">Syncing Schedule...</p>
+      <div className="h-full flex flex-col items-center justify-center space-y-6">
+        <div className="relative">
+           <div className="absolute inset-0 blur-2xl bg-purple-500/20 rounded-full animate-pulse" />
+           <Loader2 className="animate-spin text-purple-600 relative z-10" size={48} />
+        </div>
+        <p className="text-gray-400 font-black uppercase tracking-[0.3em] text-[10px] animate-pulse">Syncing Practice Schedule...</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-700">
-      <div className="flex justify-between items-end">
+    <div className="space-y-12 animate-in fade-in duration-1000 pb-20">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
         <div>
-          <h1 className="text-4xl font-bold text-[#dae2fd] tracking-tighter">Clinical Schedule</h1>
-          <p className="text-[#85948f] mt-1 font-medium">Coordinate patient encounters and clinical availability.</p>
+          <h1 className="text-4xl font-black text-zinc-900 tracking-tight uppercase">Clinical Schedule</h1>
+          <p className="text-gray-500 mt-2 font-medium text-lg italic">Coordination of clinical resources and patient temporal alignments.</p>
         </div>
         <button 
           onClick={() => {
@@ -104,125 +110,152 @@ export default function Appointments() {
             setFormData({ patient_id: '', scheduled_at: '', type: 'General Checkup', status: 'upcoming' });
             setShowModal(true);
           }}
-          className="bg-[#44ddc1] text-[#00382f] px-6 py-3 rounded-xl text-sm font-bold shadow-[0_0_20px_rgba(68,221,193,0.3)] hover:shadow-[0_0_30px_rgba(68,221,193,0.5)] transition-all flex items-center gap-2"
+          className="group bg-[#09090b] text-white px-10 py-5 rounded-[2rem] text-sm font-black shadow-2xl shadow-zinc-900/20 hover:bg-purple-600 transition-all flex items-center gap-3"
         >
-          <Plus size={18} />
-          New Appointment
+          <Plus size={20} className="text-purple-400 group-hover:rotate-90 transition-transform duration-500" />
+          Authorize Encounter
         </button>
       </div>
 
-      <div className="bg-[#131b2e] rounded-2xl border border-[#3c4a46]/10 overflow-hidden">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="border-b border-[#3c4a46]/10 bg-[#171f33]/50">
-              <th className="px-8 py-5 text-[11px] font-bold text-[#85948f] uppercase tracking-wider">Patient</th>
-              <th className="px-8 py-5 text-[11px] font-bold text-[#85948f] uppercase tracking-wider">Scheduled Time</th>
-              <th className="px-8 py-5 text-[11px] font-bold text-[#85948f] uppercase tracking-wider">Encounter Type</th>
-              <th className="px-8 py-5 text-[11px] font-bold text-[#85948f] uppercase tracking-wider">Status</th>
-              <th className="px-8 py-5"></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[#3c4a46]/5">
-            {appointments.map((apt) => (
-              <tr key={apt._id} className="hover:bg-[#171f33]/40 transition-colors group">
-                <td className="px-8 py-5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#0b1326] border border-[#3c4a46]/20 flex items-center justify-center text-xs font-bold text-[#44ddc1]">
-                      {apt.patient_name.split(' ').map((n: string) => n[0]).join('')}
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-[#dae2fd]">{apt.patient_name}</p>
-                      <p className="text-[10px] text-[#85948f]">{apt.patient_phone}</p>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-8 py-5">
-                  <div className="flex items-center gap-2 text-sm font-bold text-[#dae2fd]">
-                    <Clock size={14} className="text-[#44ddc1]" />
-                    {new Date(apt.scheduled_at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
-                  </div>
-                </td>
-                <td className="px-8 py-5">
-                  <span className="text-[10px] font-bold px-2 py-1 bg-[#171f33] rounded border border-[#3c4a46]/20 text-[#dae2fd] uppercase tracking-wider">
-                    {apt.type}
-                  </span>
-                </td>
-                <td className="px-8 py-5">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-1.5 h-1.5 rounded-full ${
-                      apt.status.toLowerCase() === 'completed' ? 'bg-[#44ddc1]' : 'bg-yellow-400'
-                    } shadow-[0_0_8px_currentColor]`} />
-                    <span className="text-[11px] font-bold text-[#dae2fd] capitalize">{apt.status}</span>
-                  </div>
-                </td>
-                <td className="px-8 py-5 text-right relative">
-                  <button 
-                    onClick={() => setActiveMenu(activeMenu === apt._id ? null : apt._id)}
-                    className="text-[#85948f] hover:text-[#dae2fd] p-1 transition-colors"
-                  >
-                    <MoreVertical size={20} />
-                  </button>
-                  
-                  {activeMenu === apt._id && (
-                    <div className="absolute right-12 top-1/2 -translate-y-1/2 bg-[#171f33] border border-[#3c4a46]/20 rounded-xl shadow-2xl z-50 py-2 w-40 animate-in zoom-in-95 duration-200">
-                      <button 
-                        onClick={() => {
-                          setEditingApt(apt);
-                          setFormData({
-                            patient_id: apt.patient_id,
-                            scheduled_at: apt.scheduled_at.split('.')[0],
-                            type: apt.type,
-                            status: apt.status
-                          });
-                          setShowModal(true);
-                          setActiveMenu(null);
-                        }}
-                        className="w-full flex items-center gap-3 px-4 py-2 text-sm font-bold text-[#dae2fd] hover:bg-[#44ddc1]/10 hover:text-[#44ddc1] transition-colors"
-                      >
-                        <Edit2 size={16} /> Reschedule
-                      </button>
-                      <button 
-                        onClick={() => {
-                          handleDelete(apt._id);
-                          setActiveMenu(null);
-                        }}
-                        className="w-full flex items-center gap-3 px-4 py-2 text-sm font-bold text-red-400 hover:bg-red-500/10 transition-colors"
-                      >
-                        <Trash2 size={16} /> Cancel
-                      </button>
-                    </div>
-                  )}
-                </td>
+      <div className="bg-white rounded-[3rem] border border-gray-100 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="bg-gray-50/50">
+                <th className="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Patient Asset</th>
+                <th className="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Temporal Alignment</th>
+                <th className="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Clinical Protocol</th>
+                <th className="px-10 py-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Session Status</th>
+                <th className="px-10 py-8"></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {appointments.map((apt) => (
+                <tr key={apt._id} className="hover:bg-gray-50/80 transition-all group">
+                  <td className="px-10 py-8">
+                    <div className="flex items-center gap-5">
+                      <div className="w-14 h-14 rounded-2xl bg-zinc-900 border border-gray-800 flex items-center justify-center text-xs font-black text-purple-400 shadow-xl group-hover:scale-105 transition-transform duration-500">
+                        {apt.patient_name?.split(' ').map((n: string) => n[0]).join('') || 'P'}
+                      </div>
+                      <div>
+                        <p className="text-base font-black text-zinc-900 group-hover:text-purple-600 transition-colors tracking-tight">{apt.patient_name}</p>
+                        <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mt-1 opacity-70 italic">{apt.patient_phone}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-10 py-8">
+                    <div className="flex items-center gap-4">
+                       <div className="p-2.5 bg-purple-50 rounded-xl text-purple-600">
+                          <Clock size={18} />
+                       </div>
+                       <div>
+                          <span className="text-sm font-black text-zinc-900 block">
+                            {new Date(apt.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
+                          </span>
+                          <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-1 block">
+                            {new Date(apt.scheduled_at).toLocaleDateString([], { day: 'numeric', month: 'long', year: 'numeric' })}
+                          </span>
+                       </div>
+                    </div>
+                  </td>
+                  <td className="px-10 py-8">
+                    <span className="text-[10px] font-black px-4 py-2 bg-white rounded-xl border-2 border-gray-100 text-zinc-900 uppercase tracking-widest shadow-sm">
+                      {apt.type}
+                    </span>
+                  </td>
+                  <td className="px-10 py-8">
+                    <div className={`inline-flex items-center gap-2.5 px-3 py-1.5 rounded-xl border ${
+                      apt.status.toLowerCase() === 'completed' ? 'bg-purple-50 border-purple-100 text-purple-600' : 'bg-amber-50 border-amber-100 text-amber-600'
+                    }`}>
+                      <div className={`w-2 h-2 rounded-full ${
+                        apt.status.toLowerCase() === 'completed' ? 'bg-purple-600' : 'bg-amber-500'
+                      } shadow-sm animate-pulse`} />
+                      <span className="text-[10px] font-black uppercase tracking-widest">{apt.status}</span>
+                    </div>
+                  </td>
+                  <td className="px-10 py-8 text-right relative">
+                    <button 
+                      onClick={() => setActiveMenu(activeMenu === apt._id ? null : apt._id)}
+                      className="text-gray-300 hover:text-purple-600 p-3 rounded-2xl hover:bg-white transition-all shadow-none hover:shadow-lg"
+                    >
+                      <MoreVertical size={24} />
+                    </button>
+                    
+                    {activeMenu === apt._id && (
+                      <div className="absolute right-16 top-1/2 -translate-y-1/2 bg-white border border-gray-100 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] z-50 py-3 w-48 animate-in zoom-in-95 duration-300 text-left">
+                        <button 
+                          onClick={() => {
+                            setEditingApt(apt);
+                            setFormData({
+                              patient_id: apt.patient_id,
+                              scheduled_at: apt.scheduled_at.split('.')[0],
+                              type: apt.type,
+                              status: apt.status
+                            });
+                            setShowModal(true);
+                            setActiveMenu(null);
+                          }}
+                          className="w-full flex items-center justify-between px-6 py-3 text-sm font-black text-zinc-900 hover:bg-purple-50 hover:text-purple-600 transition-all group/btn"
+                        >
+                          Reschedule <Edit2 size={16} />
+                        </button>
+                        <div className="h-[1px] bg-gray-50 my-1 mx-4" />
+                        <button 
+                          onClick={() => {
+                            handleDelete(apt._id);
+                            setActiveMenu(null);
+                          }}
+                          className="w-full flex items-center justify-between px-6 py-3 text-sm font-black text-red-500 hover:bg-red-50 transition-all"
+                        >
+                          Cancel <Trash2 size={16} />
+                        </button>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+              {appointments.length === 0 && (
+                <tr>
+                   <td colSpan={5} className="px-10 py-32 text-center">
+                    <div className="flex flex-col items-center gap-4 opacity-30 grayscale">
+                       <Calendar size={64} className="text-gray-400" />
+                       <p className="text-lg font-bold text-gray-500 italic">Clinical schedule synchronization complete. Zero encounters detected.</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 bg-[#060e20]/80 backdrop-blur-md flex items-center justify-center z-[100] p-6">
-          <div className="bg-[#131b2e] border border-[#3c4a46]/20 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-            <div className="p-8 border-b border-[#3c4a46]/10 flex justify-between items-center bg-[#171f33]/50">
-              <h2 className="text-xl font-bold text-[#dae2fd] tracking-tight">
-                {editingApt ? 'Reschedule Encounter' : 'Schedule New Encounter'}
-              </h2>
-              <button onClick={() => setShowModal(false)} className="text-[#85948f] hover:text-[#dae2fd]">
-                <X size={24} />
+        <div className="fixed inset-0 bg-zinc-900/70 backdrop-blur-3xl flex items-center justify-center z-[100] p-6">
+          <div className="bg-white border border-gray-200 rounded-[3.5rem] w-full max-w-2xl shadow-[0_60px_120px_-20px_rgba(0,0,0,0.4)] overflow-hidden animate-in zoom-in-95 duration-700">
+            <div className="p-12 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
+              <div>
+                <h2 className="text-3xl font-black text-zinc-900 tracking-tighter uppercase leading-none">
+                  {editingApt ? 'Reschedule session' : 'Schedule Session'}
+                </h2>
+                <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.4em] mt-4 italic">Practice Alignment Matrix</p>
+              </div>
+              <button onClick={() => setShowModal(false)} className="bg-white p-5 rounded-[1.8rem] text-gray-300 hover:text-red-500 border border-gray-100 hover:border-red-100 transition-all shadow-sm">
+                <X size={32} />
               </button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-8 space-y-6">
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-[#85948f] uppercase tracking-widest ml-1">Select Patient</label>
-                <div className="relative">
-                  <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#85948f]" />
+            <form onSubmit={handleSubmit} className="p-12 md:p-16 space-y-12">
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] ml-2">Identify Patient Asset</label>
+                <div className="relative group">
+                  <User size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-purple-600 transition-colors" />
                   <select 
                     required
-                    className="w-full bg-[#0b1326] border border-[#3c4a46]/20 text-[#dae2fd] pl-10 pr-4 py-3 rounded-xl outline-none focus:border-[#44ddc1]/40 transition-all text-sm appearance-none"
+                    className="w-full bg-gray-50 border-2 border-transparent text-zinc-900 pl-16 pr-8 py-6 rounded-[1.8rem] outline-none focus:bg-white focus:border-purple-200 transition-all text-base font-black shadow-inner appearance-none cursor-pointer"
                     value={formData.patient_id}
                     onChange={e => setFormData({...formData, patient_id: e.target.value})}
                   >
-                    <option value="">Choose from registry...</option>
+                    <option value="">Select registry profile...</option>
                     {patients.map(p => (
                       <option key={p._id} value={p._id}>{p.full_name} ({p.phone})</option>
                     ))}
@@ -230,48 +263,51 @@ export default function Appointments() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-[#85948f] uppercase tracking-widest ml-1">Date & Time</label>
-                <div className="relative">
-                  <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#85948f]" />
-                  <input 
-                    type="datetime-local" 
-                    required
-                    className="w-full bg-[#0b1326] border border-[#3c4a46]/20 text-[#dae2fd] pl-10 pr-4 py-3 rounded-xl outline-none focus:border-[#44ddc1]/40 transition-all text-sm [color-scheme:dark]"
-                    value={formData.scheduled_at}
-                    onChange={e => setFormData({...formData, scheduled_at: e.target.value})}
-                  />
+              <div className="grid grid-cols-2 gap-10">
+                <div className="space-y-4">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] ml-2">Temporal Alignment</label>
+                  <div className="relative group">
+                    <Calendar size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-purple-600 transition-colors pointer-events-none" />
+                    <input 
+                      type="datetime-local" 
+                      required
+                      className="w-full bg-gray-50 border-2 border-transparent text-zinc-900 pl-16 pr-8 py-6 rounded-[1.8rem] outline-none focus:bg-white focus:border-purple-200 transition-all text-base font-black shadow-inner"
+                      value={formData.scheduled_at}
+                      onChange={e => setFormData({...formData, scheduled_at: e.target.value})}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] ml-2">Clinical Protocol</label>
+                  <div className="relative group">
+                    <Stethoscope size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-purple-600 transition-colors pointer-events-none" />
+                    <input 
+                      type="text" 
+                      required
+                      placeholder="e.g. Diagnostic Session"
+                      className="w-full bg-gray-50 border-2 border-transparent text-zinc-900 pl-16 pr-8 py-6 rounded-[1.8rem] outline-none focus:bg-white focus:border-purple-200 transition-all text-base font-black shadow-inner"
+                      value={formData.type}
+                      onChange={e => setFormData({...formData, type: e.target.value})}
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-[#85948f] uppercase tracking-widest ml-1">Encounter Type</label>
-                <div className="relative">
-                  <Stethoscope size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#85948f]" />
-                  <input 
-                    type="text" 
-                    required
-                    placeholder="e.g. General Checkup, Surgery"
-                    className="w-full bg-[#0b1326] border border-[#3c4a46]/20 text-[#dae2fd] pl-10 pr-4 py-3 rounded-xl outline-none focus:border-[#44ddc1]/40 transition-all text-sm"
-                    value={formData.type}
-                    onChange={e => setFormData({...formData, type: e.target.value})}
-                  />
-                </div>
-              </div>
-
-              <div className="pt-4 flex gap-4">
+              <div className="pt-8 flex gap-10">
                 <button 
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 bg-[#171f33] text-[#dae2fd] py-4 rounded-xl font-bold border border-[#3c4a46]/20 hover:bg-[#222a3d] transition-all"
+                  className="flex-1 bg-white text-gray-400 py-7 rounded-[2.2rem] font-black uppercase tracking-[0.3em] text-xs border-2 border-gray-100 hover:bg-gray-50 hover:text-zinc-900 transition-all shadow-sm"
                 >
-                  Cancel
+                  Discard Session
                 </button>
                 <button 
                   type="submit"
-                  className="flex-1 bg-[#44ddc1] text-[#00382f] py-4 rounded-xl font-bold shadow-[0_0_20px_rgba(68,221,193,0.2)] hover:shadow-[0_0_30px_rgba(68,221,193,0.4)] transition-all"
+                  className="flex-1 bg-zinc-900 text-white py-7 rounded-[2.2rem] font-black uppercase tracking-[0.3em] text-xs shadow-2xl shadow-zinc-900/20 hover:bg-purple-600 hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-4"
                 >
-                  {editingApt ? 'Update Schedule' : 'Confirm Appointment'}
+                   {editingApt ? 'Confirm Realignment' : 'Authorize Encounter'}
+                   <Zap size={18} className="text-purple-400" />
                 </button>
               </div>
             </form>
