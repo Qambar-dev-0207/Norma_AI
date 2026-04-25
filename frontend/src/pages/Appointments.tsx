@@ -3,7 +3,7 @@ import axios from 'axios';
 import { 
   Calendar, Plus, MoreVertical, Edit2, Trash2, Loader2, X,
   Clock, User, Stethoscope, ChevronRight, Sparkles, Send, Zap,
-  AlertCircle, CheckCircle2, Search, Filter
+  AlertCircle, CheckCircle2, Search, Filter, RefreshCw
 } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { motion } from 'framer-motion';
